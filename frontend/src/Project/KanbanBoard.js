@@ -1254,6 +1254,7 @@ const KanbanBoard = () => {
   const [taskToAdd, setTaskToAdd] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
   const [taskDueDate, setTaskDueDate] = useState('');
+  const [assignedUsersId, setAssignedUsersId] = useState('');
   
 
   const sensors = useSensors(
@@ -1309,6 +1310,7 @@ const KanbanBoard = () => {
       alert('All task fields are required!');
       return;
     }
+    // console.log(taskDetails)
   
     const newTask = {
       id: `task-${Date.now()}`, // Generate a unique ID for the task
@@ -1316,6 +1318,8 @@ const KanbanBoard = () => {
       description: taskDetails.description,
       dueDate: taskDetails.dueDate,
       completed: false,
+      assignedUsers:taskDetails.id
+    
     };
   
     setColumns((prevColumns) => ({
@@ -1325,9 +1329,12 @@ const KanbanBoard = () => {
         tasks: [...prevColumns[columnId].tasks, newTask], // Append the new task to the existing tasks
       },
     }));
+
+    // console.log(columns)
   
     setTaskToAdd({ title: '', description: '', dueDate: '' }); // Clear the input fields
     setSelectedColumnId(null); // Close the modal or reset selection
+    setAssignedUsersId('');
   };
   
   const deleteTask = (columnId, taskId) => {
@@ -1361,7 +1368,7 @@ const KanbanBoard = () => {
       setEditingTask({ ...task, columnId }); // Pass task details and columnId to editing state
     } else {
       alert("Task not found.");
-    }
+    } 
   };
   
   const saveEditedTask = () => {
@@ -1549,6 +1556,13 @@ const KanbanBoard = () => {
               value={taskDueDate}
               onChange={(e) => setTaskDueDate(e.target.value)}
             />
+
+            <Input 
+                type='text'
+                value = {assignedUsersId}
+                placeholder="Enter Assign Users Ids"
+                onChange={(e) => setAssignedUsersId(e.target.value)}
+            />
             {/* Action Buttons */}
             <div>
               <ModalButton
@@ -1557,6 +1571,7 @@ const KanbanBoard = () => {
                     title: taskToAdd,
                     description: taskDescription,
                     dueDate: taskDueDate,
+                    id: assignedUsersId,
                   });
                   setTaskToAdd(''); // Reset fields
                   setTaskDescription('');
@@ -1619,6 +1634,7 @@ const KanbanBoard = () => {
                 setEditingTask({ ...editingTask, dueDate: e.target.value })
               }
             />
+             
             {/* Action Buttons */}
             <div>
               <ModalButton onClick={saveEditedTask}>Save</ModalButton>

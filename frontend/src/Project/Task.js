@@ -98,7 +98,6 @@
 // };
 
 // export default SortableTask;
-
 import React from "react";
 import styled from "styled-components";
 import { FaEdit, FaTrash, FaCheck } from "react-icons/fa";
@@ -110,7 +109,7 @@ const TaskWrapper = styled.div`
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 15px;
-  box-shadow: 0 4px 6px rgba(1,1,1, 1);
+  box-shadow: 0 4px 6px rgba(1, 1, 1, 1);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -122,11 +121,6 @@ const TaskWrapper = styled.div`
   &:hover {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     transform: translateY(-3px);
-  }
-
-  @media (min-width: 600px) {
-    flex-direction: row;
-    align-items: center;
   }
 `;
 
@@ -141,7 +135,6 @@ const TaskTitleWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
 `;
 
 const TaskTitle = styled.h4`
@@ -149,48 +142,17 @@ const TaskTitle = styled.h4`
   font-size: 18px;
   font-weight: 600;
   color: #333;
-  display : flex;
 `;
 
 const TaskDescription = styled.p`
   margin: 8px 0;
   font-size: 14px;
   color: #666;
-  max-height: 60px;
-  overflow-y: auto;
-  padding-right: 5px;
-  box-sizing: border-box;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: #bbb;
-  }
-`;
-
-const TaskDate = styled.small`
-  font-size: 12px;
-  color: #999;
-  margin-top: 5px;
 `;
 
 const TaskActions = styled.div`
   display: flex;
   gap: 8px;
-  align-self: flex-start;
-  margin-left:auto;
-
-  @media (min-width: 600px) {
-    align-self: center;
-  }
-
 `;
 
 const TaskButton = styled.button`
@@ -202,10 +164,6 @@ const TaskButton = styled.button`
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s, transform 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
 
   &:hover {
     background-color: #0056b3;
@@ -217,41 +175,118 @@ const TaskButton = styled.button`
   }
 `;
 
-const SortableTask = ({ id, task, columnId, deleteTask, toggleTaskCompletion, editTask }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+const AssignedUsers = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+`;
+
+const UserAvatar = styled.img`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  object-fit: cover;
+`;
+
+const SortableTask = ({
     id,
-  });
+    task,
+    columnId,
+    deleteTask,
+    toggleTaskCompletion,
+    editTask,
+    columns,
+    users,
+    // assignUserToTask,
+  }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+      id,
+    });
+  
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+  
+    // Safely handle `assignedUsers`
+    console.log("start")
+    
+    // const arr = columns[columnId].tasks.map((user)=>user.assignedUsers.split(","))
+    // console.log(arr)
+    // arr.forEach(element => {
+    //     element.map((userId) => users.find((user) => userId == user.id)).filter((user) => user !== undefined)
+    // });
+    const arr = columns[columnId].tasks.map((task) => task.assignedUsers.split(","));
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+    const assignedUsers = arr.map((element) =>
+    element
+        .map((userId) => users.find((user) => userId == user.id)) // Find user objects
+        .filter((user) => user !== undefined) // Filter out undefined users
+    );
 
-  return (
-    <TaskWrapper ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <div style={{ cursor: "grab" }}>
-        <FaEdit />
-      </div>
-      <TaskDetails>
-        <TaskTitle>{task.title}
-        <TaskActions>
-        <TaskButton onClick={(e) => { e.stopPropagation(); toggleTaskCompletion(columnId, task.id); }}>
-          {task.completed ? <FaCheck /> : "Complete"}
-        </TaskButton>
-        <TaskButton onClick={(e) => { e.stopPropagation(); editTask(columnId, task.id); }}>
-          <FaEdit />
-        </TaskButton>
-        <TaskButton onClick={(e) => { e.stopPropagation(); deleteTask(columnId, task.id); }}>
-          <FaTrash />
-        </TaskButton>
-      </TaskActions>
-      </TaskTitle>
-        <TaskDescription>{task.description}</TaskDescription>
-        <small>Due: {task.dueDate}</small>
-      </TaskDetails>
+    // console.log(allUsers);
+    assignedUsers.map((userArray, index) => (
+        
+          userArray.map((user) => user)))
+        
       
-    </TaskWrapper>
-  );
-};
+    
+    console.log(assignedUsers)
+    
+    console.log(assignedUsers.map((user)=>user.map((userid)=>userid)))
+  
+    return (
+      <TaskWrapper ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <TaskDetails>
+          <TaskTitleWrapper>
+            <TaskTitle>{task.title}</TaskTitle>
+            <TaskActions>
+              <TaskButton onClick={(e) => toggleTaskCompletion(columnId, task.id)}>
+                {task.completed ? <FaCheck /> : "Complete"}
+              </TaskButton>
+              <TaskButton onClick={(e) => editTask(columnId, task.id)}>
+                <FaEdit />
+              </TaskButton>
+              <TaskButton onClick={(e) => deleteTask(columnId, task.id)}>
+                <FaTrash />
+              </TaskButton>
+            </TaskActions>
+          </TaskTitleWrapper>
+          <TaskDescription>{task.description}</TaskDescription>
+          <small>Due: {task.dueDate}</small>
+          <AssignedUsers>
+          {assignedUsers.map((userArray, index) => (
+            <div key={index}>
+                {userArray.map((user) => (
+                <UserAvatar key={user.id} src={user.avatar} title={user.name} />
+                ))}
+            </div>
+            ))}
 
-export default SortableTask;
+             {/* <select
+              onChange={(e) => {
+                assignUserToTask(task.id, parseInt(e.target.value, 10));
+              }}
+              defaultValue=""
+            > 
+               <option value="" disabled>
+                Assign User
+              </option>
+              {users
+                .filter((user) => !(task.assignedUsers || []).includes(user.id))
+                .map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+            </select>  */}
+          </AssignedUsers>
+        </TaskDetails>
+      </TaskWrapper>
+    );
+  };
+  
+  export default SortableTask;
+  
