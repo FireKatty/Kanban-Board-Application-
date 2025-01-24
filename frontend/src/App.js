@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // import Board from './components/Board';
-import KanbanPage from './pages/KanbanPage';
+import KanbanPage from './Project/KanbanBoard';
 
 function App() {
   return (

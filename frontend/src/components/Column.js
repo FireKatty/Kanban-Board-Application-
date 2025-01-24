@@ -78,8 +78,6 @@
 // };
 
 // export default Column;
-
-
 import React from 'react';
 import styled from 'styled-components';
 import { FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
@@ -161,7 +159,6 @@ const SortableTask = ({ id, task, columnId, deleteTask, toggleTaskCompletion, ed
   return (
     <TaskWrapper ref={setNodeRef} style={style}>
       <div {...attributes} {...listeners} style={{ cursor: 'grab', marginRight: '10px' }}>
-        {/* Drag handle */}
         <FaEdit style={{ cursor: 'grab' }} />
       </div>
       <TaskDetails>
@@ -199,53 +196,46 @@ const SortableTask = ({ id, task, columnId, deleteTask, toggleTaskCompletion, ed
   );
 };
 
-
-const Column = ({ columnId, column, setColumns, deleteTask, toggleTaskCompletion, editTask }) => {
+const Column = ({ columnId, columns, setColumns, deleteTask, toggleTaskCompletion, editTask }) => {
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
-    if (!over || active.id === over.id) return;
+    // If the task was dropped over another column
+    if (over && active.data.current.type === 'task') {
+      const activeColumnId = active.data.current.columnId;
+      const overColumnId = over.id;
 
-    const activeColumnId = active.data.current.sortable.containerId;
-    const overColumnId = over.data.current.sortable.containerId;
+      if (activeColumnId !== overColumnId) {
+        const task = columns[activeColumnId].tasks.find((t) => t.id === active.id);
 
-    if (activeColumnId === overColumnId) {
-      const columnTasks = [...column.tasks];
-      const oldIndex = columnTasks.findIndex((task) => task.id === active.id);
-      const newIndex = columnTasks.findIndex((task) => task.id === over.id);
-
-      columnTasks.splice(newIndex, 0, ...columnTasks.splice(oldIndex, 1));
-      setColumns((prev) => ({
-        ...prev,
-        [activeColumnId]: {
-          ...prev[activeColumnId],
-          tasks: columnTasks,
-        },
-      }));
-    } else {
-      const sourceColumn = column;
-      const targetColumn = overColumnId;
-      const activeTask = sourceColumn.tasks.find((task) => task.id === active.id);
-
-      setColumns((prev) => {
-        const sourceTasks = sourceColumn.tasks.filter((task) => task.id !== active.id);
-        const targetTasks = [...prev[targetColumn].tasks, activeTask];
-
-        return {
-          ...prev,
-          [activeColumnId]: { ...sourceColumn, tasks: sourceTasks },
-          [targetColumn]: { ...prev[targetColumn], tasks: targetTasks },
+        // Remove task from the source column
+        const updatedSourceColumn = {
+          ...columns[activeColumnId],
+          tasks: columns[activeColumnId].tasks.filter((t) => t.id !== active.id),
         };
-      });
+
+        // Add task to the target column
+        const updatedTargetColumn = {
+          ...columns[overColumnId],
+          tasks: [...columns[overColumnId].tasks, task],
+        };
+
+        // Update state with the new columns
+        setColumns({
+          ...columns,
+          [activeColumnId]: updatedSourceColumn,
+          [overColumnId]: updatedTargetColumn,
+        });
+      }
     }
   };
 
   return (
     <ColumnWrapper>
-      <ColumnTitle>{column.title}</ColumnTitle>
+      <ColumnTitle>{columns[columnId].title}</ColumnTitle>
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={column.tasks.map(task => task.id)} strategy={verticalListSortingStrategy}>
-          {column.tasks.map((task) => (
+        <SortableContext items={columns[columnId].tasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
+          {columns[columnId].tasks.map((task) => (
             <SortableTask
               key={task.id}
               id={task.id}

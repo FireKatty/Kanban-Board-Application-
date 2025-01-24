@@ -36,3 +36,35 @@
     transform: rotate(360deg);
   }
 }
+
+.kanban-board {
+  display: flex;
+  gap: 20px;
+}
+
+.column {
+  width: 300px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.column h2 {
+  text-align: center;
+}
+
+.task {
+  padding: 10px;
+  background-color: #f1f1f1;
+  margin: 10px 0;
+  border-radius: 5px;
+  cursor: grab;
+}
+
+.task h3 {
+  margin: 0;
+}
+
+.task p {
+  margin: 5px 0;
+}

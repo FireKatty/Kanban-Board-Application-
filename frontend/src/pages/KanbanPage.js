@@ -1,239 +1,250 @@
-// // src/pages/KanbanPage.js
-// import React, { useState } from 'react';
-// import styled from 'styled-components';
-// import KanbanBoard from '../components/Board';
-
-// const mockUsers = ['John', 'Jane', 'Mike'];
-
-
-
-// const KanbanPage = () => {
-//     const initialColumns = {
-//         'todo': {
-//           name: 'To Do',
-//           tasks: [
-//             { id: 'task-1', content: 'Task 1', assignee: 'John' },
-//             { id: 'task-2', content: 'Task 2', assignee: 'Jane' }
-//           ]
-//         },
-//         'inProgress': {
-//           name: 'In Progress',
-//           tasks: [
-//             { id: 'task-3', content: 'Task 3', assignee: 'Mike' }
-//           ]
-//         },
-//         'done': {
-//           name: 'Done',
-//           tasks: []
-//         }
-//     };
-//     const [columns, setColumns] = useState({
-//         'todo': {
-//           name: 'To Do',
-//           tasks: [
-//             { id: 'task-1', content: 'Task 1', assignee: 'John' },
-//             { id: 'task-2', content: 'Task 2', assignee: 'Jane' }
-//           ]
-//         }});
-
-// //   const handleDragEnd = (result) => {
-// //     const { destination, source } = result;
-// //     if (!destination) return;
-
-// //     if (destination.droppableId === source.droppableId) {
-// //       const column = columns[source.droppableId];
-// //       const updatedTasks = Array.from(column.tasks);
-// //       const [removed] = updatedTasks.splice(source.index, 1);
-// //       updatedTasks.splice(destination.index, 0, removed);
-
-// //       const updatedColumns = { ...columns, [source.droppableId]: { ...column, tasks: updatedTasks } };
-// //       setColumns(updatedColumns);
-// //     } else {
-// //       const sourceColumn = columns[source.droppableId];
-// //       const destColumn = columns[destination.droppableId];
-// //       const sourceTasks = Array.from(sourceColumn.tasks);
-// //       const destTasks = Array.from(destColumn.tasks);
-
-// //       const [removed] = sourceTasks.splice(source.index, 1);
-// //       destTasks.splice(destination.index, 0, removed);
-
-// //       const updatedColumns = {
-// //         ...columns,
-// //         [source.droppableId]: { ...sourceColumn, tasks: sourceTasks },
-// //         [destination.droppableId]: { ...destColumn, tasks: destTasks }
-// //       };
-// //       setColumns(updatedColumns);
-// //     }
-// //   };
-
-//   const addColumn = () => {
-//     const columnId = `column-${Date.now()}`;
-//     const newColumn = { name: `New Column`, tasks: [] };
-//     setColumns({ ...columns, [columnId]: newColumn });
-//   };
-
-//   const renameColumn = (id, newName) => {
-//     const updatedColumns = { ...columns, [id]: { ...columns[id], name: newName } };
-//     setColumns(updatedColumns);
-//   };
-
-//   const removeColumn = (id) => {
-//     const updatedColumns = { ...columns };
-//     delete updatedColumns[id];
-//     setColumns(updatedColumns);
-//   };
-
-//   const addTask = (columnId, taskContent, assignee) => {
-//     const taskId = `task-${Date.now()}`;
-//     const newTask = { id: taskId, content: taskContent, assignee };
-//     const updatedColumn = { ...columns[columnId], tasks: [...columns[columnId].tasks, newTask] };
-//     setColumns({ ...columns, [columnId]: updatedColumn });
-//   };
-
-//   const removeTask = (columnId, taskId) => {
-//     const updatedTasks = columns[columnId].tasks.filter(task => task.id !== taskId);
-//     const updatedColumn = { ...columns[columnId], tasks: updatedTasks };
-//     setColumns({ ...columns, [columnId]: updatedColumn });
-//   };
-
-//   return (
-//     <PageContainer>
-//       <Header>
-//         <Title>Kanban Board</Title>
-//         <AddColumnButton onClick={addColumn}>Add Column</AddColumnButton>
-//       </Header>
-
-//       <KanbanBoard
-//         columns={columns}
-//         // handleDragEnd={handleDragEnd}
-//         renameColumn={renameColumn}
-//         removeColumn={removeColumn}
-//         addTask={addTask}
-//         removeTask={removeTask}
-//       />
-//     </PageContainer>
-//   );
-// };
-
-// export default KanbanPage;
-
-// // Styled Components
-
-// const PageContainer = styled.div`
-//   font-family: Arial, sans-serif;
-//   padding: 20px;
-// `;
-
-// const Header = styled.header`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   margin-bottom: 30px;
-// `;
-
-// const Title = styled.h1`
-//   font-size: 32px;
-// `;
-
-// const AddColumnButton = styled.button`
-//   background-color: #4CAF50;
-//   color: white;
-//   border: none;
-//   padding: 10px;
-//   cursor: pointer;
-// `;
-
-
-// KanbanPage.js
-import { useState } from 'react';
-import React  from 'react';
-import Columns from '../components/Columns'; // Import the Columns component
-
+import React, { useState } from 'react';
 import styled from 'styled-components';
-
-const KanbanPage = ({ user }) => {
-  const [loggedIn, setLoggedIn] = useState(true);
-
-  const handleLogout = () => {
-    setLoggedIn(false);
-    // Additional logout logic can be added here (e.g., clearing tokens, redirecting)
-  };
-
-  return (
-    <PageContainer>
-      <Header>
-        <Title>Kanban Board</Title>
-        {loggedIn && (
-          <UserSection>
-            <WelcomeMessage>Welcome, {user}</WelcomeMessage>
-            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-          </UserSection>
-        )}
-      </Header>
-      <BoardContainer>
-        <Columns/>
-        {/* Kanban board content can be added here */}
-      </BoardContainer>
-    </PageContainer>
-  );
-};
-
-export default KanbanPage;
+import { FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 // Styled Components
-
-const PageContainer = styled.div`
-  font-family: Arial, sans-serif;
-  padding: 20px;
-`;
-
-const Header = styled.header`
+const TaskWrapper = styled.div`
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  position: relative;
+  cursor: pointer;
 `;
 
-const Title = styled.h1`
-  font-size: 32px;
-  font-weight: bold;
-  text-align: center;
-  margin-right: 20px;
-`;
-
-const UserSection = styled.div`
-  position: absolute;
-  right: 20px;
+const TaskDetails = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
 `;
 
-const WelcomeMessage = styled.span`
+const TaskTitle = styled.h4`
+  margin: 0;
   font-size: 16px;
-  margin-right: 15px;
 `;
 
-const LogoutButton = styled.button`
-  background-color: #ff4d4f;
+const TaskDescription = styled.p`
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+`;
+
+const TaskActions = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const TaskButton = styled.button`
+  background-color: #007bff;
   color: white;
   border: none;
-  padding: 8px 15px;
-  font-size: 14px;
-  cursor: pointer;
+  padding: 5px;
   border-radius: 5px;
-  
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+
   &:hover {
-    background-color: #ff7875;
+    background-color: #0056b3;
   }
 `;
 
-const BoardContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  /* Kanban board layout styles go here */
+const ColumnWrapper = styled.div`
+  background-color: #f4f5f7;
+  padding: 15px;
+  border-radius: 10px;
+  width: 300px;
+  margin: 10px;
 `;
 
+const ColumnTitle = styled.h3`
+  margin: 0 0 10px;
+  text-align: center;
+`;
 
+// Task Component (Sortable)
+const SortableTask = ({ id, task, columnId, deleteTask, toggleTaskCompletion, editTask }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id,
+    data: { type: 'task', columnId },
+  });
 
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <TaskWrapper ref={setNodeRef} style={style}>
+      <div {...attributes} {...listeners} style={{ cursor: 'grab', marginRight: '10px' }}>
+        <FaEdit style={{ cursor: 'grab' }} />
+      </div>
+      <TaskDetails>
+        <TaskTitle>{task.title}</TaskTitle>
+        <TaskDescription>{task.description}</TaskDescription>
+        <small>Due: {task.dueDate}</small>
+      </TaskDetails>
+      <TaskActions>
+        <TaskButton
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleTaskCompletion(columnId, task.id);
+          }}
+        >
+          {task.completed ? <FaCheck /> : 'Complete'}
+        </TaskButton>
+        <TaskButton
+          onClick={(e) => {
+            e.stopPropagation();
+            editTask(columnId, task.id);
+          }}
+        >
+          <FaEdit />
+        </TaskButton>
+        <TaskButton
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteTask(columnId, task.id);
+          }}
+        >
+          <FaTrash />
+        </TaskButton>
+      </TaskActions>
+    </TaskWrapper>
+  );
+};
+
+// Column Component (Drag and Drop)
+const Column = ({ columnId, column, columns, setColumns, deleteTask, toggleTaskCompletion, editTask }) => {
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    // Check if a task was dragged and dropped
+    if (over && active.data.current.type === 'task') {
+      const activeColumnId = active.data.current.columnId;
+      const overColumnId = over.id;
+
+      // Check if task is dropped in another column
+      if (activeColumnId !== overColumnId) {
+        const task = columns[activeColumnId]?.tasks.find((t) => t.id === active.id);
+
+        // Ensure task exists
+        if (!task) return;
+
+        // Remove task from source column
+        const updatedSourceColumn = {
+          ...columns[activeColumnId],
+          tasks: columns[activeColumnId].tasks.filter((t) => t.id !== active.id),
+        };
+
+        // Add task to target column
+        const updatedTargetColumn = {
+          ...columns[overColumnId],
+          tasks: [...columns[overColumnId].tasks, task],
+        };
+
+        // Update columns state
+        setColumns((prevColumns) => ({
+          ...prevColumns,
+          [activeColumnId]: updatedSourceColumn,
+          [overColumnId]: updatedTargetColumn,
+        }));
+      }
+    }
+  };
+
+  return (
+    <ColumnWrapper>
+      <ColumnTitle>{column.title}</ColumnTitle>
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={column.tasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
+          {column.tasks.map((task) => (
+            <SortableTask
+              key={task.id}
+              id={task.id}
+              task={task}
+              columnId={columnId}
+              deleteTask={deleteTask}
+              toggleTaskCompletion={toggleTaskCompletion}
+              editTask={editTask}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
+    </ColumnWrapper>
+  );
+};
+
+// Parent Component
+const KanbanBoard = () => {
+  const [columns, setColumns] = useState({
+    'column-1': {
+      title: 'To Do',
+      tasks: [
+        { id: 'task-1', title: 'Task 1', description: 'Description of Task 1', dueDate: '2025-01-30', completed: false },
+        { id: 'task-2', title: 'Task 2', description: 'Description of Task 2', dueDate: '2025-01-31', completed: false },
+      ],
+    },
+    'column-2': {
+      title: 'In Progress',
+      tasks: [
+        { id: 'task-3', title: 'Task 3', description: 'Description of Task 3', dueDate: '2025-02-01', completed: false },
+      ],
+    },
+    'column-3': {
+      title: 'Done',
+      tasks: [],
+    },
+  });
+
+  const deleteTask = (columnId, taskId) => {
+    setColumns((prevColumns) => {
+      const updatedTasks = prevColumns[columnId].tasks.filter((task) => task.id !== taskId);
+      return {
+        ...prevColumns,
+        [columnId]: { ...prevColumns[columnId], tasks: updatedTasks },
+      };
+    });
+  };
+
+  const toggleTaskCompletion = (columnId, taskId) => {
+    setColumns((prevColumns) => {
+      const updatedTasks = prevColumns[columnId].tasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      );
+      return {
+        ...prevColumns,
+        [columnId]: { ...prevColumns[columnId], tasks: updatedTasks },
+      };
+    });
+  };
+
+  const editTask = (columnId, taskId) => {
+    // Logic for editing task (e.g., open a modal)
+    console.log('Edit Task:', columnId, taskId);
+  };
+
+  return (
+    <div style={{ display: 'flex', overflowX: 'auto' }}>
+      {Object.keys(columns).map((columnId) => (
+        <Column
+          key={columnId}
+          columnId={columnId}
+          column={columns[columnId]}
+          columns={columns}
+          setColumns={setColumns}
+          deleteTask={deleteTask}
+          toggleTaskCompletion={toggleTaskCompletion}
+          editTask={editTask}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default KanbanBoard;

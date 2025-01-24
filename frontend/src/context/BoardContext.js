@@ -1,91 +1,59 @@
-import React, { createContext, useState } from "react";
+// src/context/KanbanContext.js
+import React, { createContext, useContext, useState } from 'react';
 
-// Create the context
-export const BoardContext = createContext();
+const KanbanContext = createContext();
 
-// Context Provider
-export const BoardProvider = ({ children }) => {
+export const useKanbanContext = () => useContext(KanbanContext);
+
+export const KanbanProvider = ({ children }) => {
   const [columns, setColumns] = useState([
     {
-      id: "col-1",
-      name: "To Do",
-      tasks: [
-        { id: "task-1", name: "Task 1", description: "Description 1", dueDate: "2025-01-25" },
-        { id: "task-2", name: "Task 2", description: "Description 2", dueDate: "2025-01-26" },
-      ],
+      id: 'todo',
+      title: 'To Do',
+      tasks: [{ id: 1, title: 'Task 1' }, { id: 2, title: 'Task 2' }],
     },
-    {
-      id: "col-2",
-      name: "In Progress",
-      tasks: [],
-    },
-    {
-      id: "col-3",
-      name: "Done",
-      tasks: [],
-    },
+    { id: 'inProgress', title: 'In Progress', tasks: [] },
+    { id: 'done', title: 'Done', tasks: [] },
   ]);
 
-  // Define all context methods here
-  const addColumn = (name) => {
-    setColumns((prevColumns) => [
-      ...prevColumns,
-      { id: `col-${Date.now()}`, name, tasks: [] },
-    ]);
-  };
-
-  const renameColumn = (id, newName) => {
+  const addTask = (columnId, taskTitle) => {
     setColumns((prevColumns) =>
-      prevColumns.map((col) => (col.id === id ? { ...col, name: newName } : col))
-    );
-  };
-
-  const deleteColumn = (id) => {
-    setColumns((prevColumns) => prevColumns.filter((col) => col.id !== id));
-  };
-
-  const addTask = (columnId, task) => {
-    setColumns((prevColumns) =>
-      prevColumns.map((col) =>
-        col.id === columnId
-          ? { ...col, tasks: [...col.tasks, { ...task, id: `task-${Date.now()}` }] }
-          : col
+      prevColumns.map((column) =>
+        column.id === columnId
+          ? { ...column, tasks: [...column.tasks, { id: Date.now(), title: taskTitle }] }
+          : column
       )
     );
   };
 
-  const moveTask = (sourceColId, targetColId, taskId) => {
-    let taskToMove = null;
+  const deleteTask = (columnId, taskId) => {
+    setColumns((prevColumns) =>
+      prevColumns.map((column) =>
+        column.id === columnId
+          ? { ...column, tasks: column.tasks.filter((task) => task.id !== taskId) }
+          : column
+      )
+    );
+  };
 
-    const updatedColumns = columns.map((col) => {
-      if (col.id === sourceColId) {
-        const taskIndex = col.tasks.findIndex((task) => task.id === taskId);
-        if (taskIndex > -1) {
-          taskToMove = col.tasks[taskIndex];
-          col.tasks.splice(taskIndex, 1);
-        }
-      }
-      if (col.id === targetColId && taskToMove) {
-        return { ...col, tasks: [...col.tasks, taskToMove] };
-      }
-      return col;
-    });
-
-    setColumns(updatedColumns);
+  const editTask = (columnId, taskId, newTitle) => {
+    setColumns((prevColumns) =>
+      prevColumns.map((column) =>
+        column.id === columnId
+          ? {
+              ...column,
+              tasks: column.tasks.map((task) =>
+                task.id === taskId ? { ...task, title: newTitle } : task
+              ),
+            }
+          : column
+      )
+    );
   };
 
   return (
-    <BoardContext.Provider
-      value={{
-        columns,
-        addColumn,
-        renameColumn,
-        deleteColumn,
-        addTask,
-        moveTask,
-      }}
-    >
+    <KanbanContext.Provider value={{ columns, addTask, deleteTask, editTask }}>
       {children}
-    </BoardContext.Provider>
+    </KanbanContext.Provider>
   );
 };
