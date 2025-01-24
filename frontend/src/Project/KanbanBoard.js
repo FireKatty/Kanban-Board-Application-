@@ -1070,12 +1070,15 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import Column from './Column';
 
 // Styled Components
+
 const ColumnsContainer = styled.div`
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
   padding: 20px;
   justify-content: flex-start;
+  align-items: flex-start; /* Prevents columns from stretching vertically */
+  
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
@@ -1083,14 +1086,20 @@ const ColumnsContainer = styled.div`
 `;
 
 const ColumnWrapper = styled.div`
-  width: 300px;
+  min-width: 200px; /* Minimum width for smaller columns */
+  width: fit-content; /* Adjust width to fit the content */
+  min-height: 100px; /* Minimum height to maintain structure */
+  height: auto; /* Allow height to depend on content */
   background-color: #f4f5f7;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 1);
   display: flex;
   flex-direction: column;
+  gap: 10px; /* Space between tasks within the column */
+//   align-items: flex-start; /* Align content within the column */
 `;
+
 
 const AddColumnButton = styled.button`
   background-color: #007bff;
@@ -1450,7 +1459,7 @@ const KanbanBoard = () => {
 <>
                     {columns[columnId]?.title}
                     <ColumnActions>
-                        <RenameButton onClick={() => { setIsRenaming(columnId); setRenameValue(columns[columnId]?.name); }}>
+                        <RenameButton onClick={() => { setIsRenaming(columnId); setRenameValue(columns[columnId]?.title); }}>
                         <FaEdit />
                         </RenameButton>
                         <button onClick={() => { setColumns((prev) => { const newCols = { ...prev }; delete newCols[columnId]; return newCols; });  }}>
