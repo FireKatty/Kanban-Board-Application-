@@ -17,10 +17,10 @@ const signup = async (req, res) => {
       // console.log(confirmPassword)
 
   
-      // Check if passwords match
-      // if (password !== confirmPassword) {
-      //   return res.status(400).json({ error: "Passwords do not match" });
-      // }
+    //   Check if passwords match
+      if (password !== confirmPassword) {
+        return res.status(400).json({ error: "Passwords do not match" });
+      }
   
       // Check if the username already exists
       const existingUser = await User.findOne({ email });
@@ -32,7 +32,7 @@ const signup = async (req, res) => {
       // Hash the password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      console.log(hashedPassword)
+    //   console.log(hashedPassword)
   
       // Create a new user
       const newUser = new User({
@@ -43,7 +43,7 @@ const signup = async (req, res) => {
   
       // Save the user to the database
       await newUser.save();
-      console.log(newUser)
+    //   console.log(newUser)
       // Generate JWT token
       const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
         expiresIn: "15d",
@@ -62,31 +62,6 @@ const signup = async (req, res) => {
     }
 };
   
-const check_email =  async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    // Validate that the email field is provided
-    if (!email) {
-      return res.status(400).json({ message: "Email is required." });
-    }
-
-    // Check if the email exists in the database
-    const user = await User.findOne({ email });
-
-    if (user) {
-      return res.status(200).json({ exists: true });
-    } else {
-      return res.status(200).json({ exists: false });
-    }
-  } catch (error) {
-    console.error("Error checking email:", error);
-    return res
-      .status(500)
-      .json({ message: "An error occurred while checking the email." });
-  }
-};
-
 
 
 const login = async(req,res)=>{
@@ -94,7 +69,7 @@ const login = async(req,res)=>{
         // console.log(req.body)
         const {email,password} = req.body;
         const user = await User.findOne({email});
-        console.log(user)
+        // console.log(user)
         const isPasswordCorrect = await bcrypt.compare(password,user?.password|| "");
         // console.log(user)
         if (!user || !isPasswordCorrect){
@@ -102,7 +77,7 @@ const login = async(req,res)=>{
         }
 
         const token = generateToken(user._id);
-        console.log(user)
+        // console.log(user)
         // console.log(token)
         res.send({result:user,auth:token});
     
@@ -115,4 +90,4 @@ const login = async(req,res)=>{
 }
 
 
-module.exports = {signup,check_email,login};
+module.exports = {signup,login};

@@ -1,101 +1,3 @@
-// import React from "react";
-// import styled from "styled-components";
-// import { FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
-// import { useSortable } from '@dnd-kit/sortable';
-// import { CSS } from '@dnd-kit/utilities';
-
-// const TaskWrapper = styled.div`
-//   background-color: white;
-//   padding: 10px;
-//   border-radius: 5px;
-//   margin-bottom: 10px;
-//   box-shadow: 0 2px 5px rgba(0, 0, 0, 1);
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   cursor: pointer;
-// `;
-
-// const TaskDetails = styled.div`
-//   display: flex;
-//   flex-direction: column;
-// `;
-
-// const TaskTitle = styled.h4`
-//   margin: 0;
-//   font-size: 16px;
-// `;
-
-// const TaskDescription = styled.p`
-//   margin: 5px 0;
-//   font-size: 14px;
-//   color: #555;
-// `;
-
-// const TaskActions = styled.div`
-//   display: flex;
-//   gap: 10px;
-// `;
-
-// const TaskButton = styled.button`
-//   background-color: #007bff;
-//   color: white;
-//   border: none;
-//   padding: 5px;
-//   border-radius: 5px;
-//   cursor: pointer;
-//   font-size: 14px;
-//   transition: background-color 0.3s;
-
-//   &:hover {
-//     background-color: #0056b3;
-//   }
-// `;
-
-// const SortableTask = ({ id, task, columnId, deleteTask, toggleTaskCompletion, editTask }) => {
-//     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
-//       id,
-//       data: { columnId },
-//     });
-
-//     const style = {
-//       transform: CSS.Transform.toString(transform),
-//       transition,
-//     };
-
-//     return (
-//       <TaskWrapper ref={setNodeRef} style={style}>
-//         <div {...attributes} {...listeners} style={{ cursor: 'grab', marginRight: '10px' }}>
-//           <FaEdit style={{ cursor: 'grab' }} />
-//         </div>
-//         <TaskDetails>
-//           <TaskTitle>{task.title}</TaskTitle>
-//           <TaskDescription>{task.description}</TaskDescription>
-//           <small>Due: {task.dueDate}</small>
-//         </TaskDetails>
-//         <TaskActions>
-//           <TaskButton
-//             onClick={(e) => { e.stopPropagation(); toggleTaskCompletion(columnId, task.id); }}
-//             aria-label={task.completed ? "Undo completion" : "Mark as complete"}
-//           >
-//             {task.completed ? <FaCheck /> : 'Complete'}
-//           </TaskButton>
-//           <TaskButton
-//             onClick={(e) => { e.stopPropagation(); editTask(columnId, task.id); }}
-//             aria-label="Edit task"
-//           >
-//             <FaEdit />
-//           </TaskButton>
-//           <TaskButton
-//             onClick={(e) => { e.stopPropagation(); deleteTask(columnId, task.id); }}
-//             aria-label="Delete task"
-//           >
-//             <FaTrash />
-//           </TaskButton>
-//         </TaskActions>
-//       </TaskWrapper>
-//     );
-// };
 
 // export default SortableTask;
 import React from "react";
@@ -103,7 +5,7 @@ import styled from "styled-components";
 import { FaEdit, FaTrash, FaCheck } from "react-icons/fa";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useKanban } from "./KanbanContext";
+import { useKanban } from "../context/KanbanContext";
 
 const TaskWrapper = styled.div`
   background-color: #f9f9f9;
@@ -246,16 +148,6 @@ const SortableTask = ({
       } 
     };
   
-    // Safely handle `assignedUsers`
-    // console.log("start")
-    
-    // const arr = columns[columnId].tasks.map((user)=>user.assignedUsers.split(","))
-    // console.log(arr)
-    // arr.forEach(element => {
-    //     element.map((userId) => users.find((user) => userId == user.id)).filter((user) => user !== undefined)
-    // });
-    // const arr = columns[columnId].tasks.map((task) => task.assignedUsers.split(","));
-    // console.log(assignUserToTask)
     const assignedUsers = assignUserToTask
       .map((element) => users.find((user) => element == user.id)) // Find user objects
       .filter((user) => user !== undefined); // Filter out undefined users      
@@ -284,23 +176,6 @@ const SortableTask = ({
           {assignedUsers.map((user) => (
             <UserAvatar key={user.id} src={user.avatar} title={user.name} />
           ))}
-             {/* <select
-              onChange={(e) => {
-                assignUserToTask(task.id, parseInt(e.target.value, 10));
-              }}
-              defaultValue=""
-            > 
-               <option value="" disabled>
-                Assign User
-              </option>
-              {users
-                .filter((user) => !(task.assignedUsers || []).includes(user.id))
-                .map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))}
-            </select>  */}
           </AssignedUsers>
         </TaskDetails>
       </TaskWrapper>

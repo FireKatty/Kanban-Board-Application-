@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // Define the schema for the Signup model
 const SignupSchema = new mongoose.Schema({
-  fullName: {
+  name: {
     type: String,
     required: true,
     trim: true,
@@ -14,12 +14,12 @@ const SignupSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
-  phoneNumber: {
-    type: String,
-    required: true,
-    unique: true,
-    match: [/^\d{10}$/, 'Phone number must be 10 digits'],
-  },
+  // phoneNumber: {
+  //   type: String,
+  //   required: true,
+  //   unique: true,
+  //   match: [/^\d{10}$/, 'Phone number must be 10 digits'],
+  // },
   password: {
     type: String,
     required: true,

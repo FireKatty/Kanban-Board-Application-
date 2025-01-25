@@ -1,116 +1,133 @@
-// // src/pages/KanbanPage.js
-// import React, { useState } from 'react';
-// import styled from 'styled-components';
-// import KanbanBoard from '../components/Board';
-
-// const mockUsers = ['John', 'Jane', 'Mike'];
 
 
+// // // KanbanPage.js
+// // import { useState } from 'react';
+// // import React  from 'react';
+// // import styled from 'styled-components';
+// // import KanbanBoard from '../Project/KanbanBoard';
+// // import { useNavigate } from 'react-router-dom';
 
-// const KanbanPage = () => {
-//     const initialColumns = {
-//         'todo': {
-//           name: 'To Do',
-//           tasks: [
-//             { id: 'task-1', content: 'Task 1', assignee: 'John' },
-//             { id: 'task-2', content: 'Task 2', assignee: 'Jane' }
-//           ]
-//         },
-//         'inProgress': {
-//           name: 'In Progress',
-//           tasks: [
-//             { id: 'task-3', content: 'Task 3', assignee: 'Mike' }
-//           ]
-//         },
-//         'done': {
-//           name: 'Done',
-//           tasks: []
-//         }
-//     };
-//     const [columns, setColumns] = useState({
-//         'todo': {
-//           name: 'To Do',
-//           tasks: [
-//             { id: 'task-1', content: 'Task 1', assignee: 'John' },
-//             { id: 'task-2', content: 'Task 2', assignee: 'Jane' }
-//           ]
-//         }});
+// // const KanbanPage = () => {
+// //   const [loggedIn, setLoggedIn] = useState(true); 
+// //   const user = JSON.parse(localStorage.getItem("user"));
+// //   const navigate = useNavigate();
+ 
 
-// //   const handleDragEnd = (result) => {
-// //     const { destination, source } = result;
-// //     if (!destination) return;
+// //   const handleLogout = () => {
+// //     localStorage.clear();
+// //     navigate("/");
 
-// //     if (destination.droppableId === source.droppableId) {
-// //       const column = columns[source.droppableId];
-// //       const updatedTasks = Array.from(column.tasks);
-// //       const [removed] = updatedTasks.splice(source.index, 1);
-// //       updatedTasks.splice(destination.index, 0, removed);
-
-// //       const updatedColumns = { ...columns, [source.droppableId]: { ...column, tasks: updatedTasks } };
-// //       setColumns(updatedColumns);
-// //     } else {
-// //       const sourceColumn = columns[source.droppableId];
-// //       const destColumn = columns[destination.droppableId];
-// //       const sourceTasks = Array.from(sourceColumn.tasks);
-// //       const destTasks = Array.from(destColumn.tasks);
-
-// //       const [removed] = sourceTasks.splice(source.index, 1);
-// //       destTasks.splice(destination.index, 0, removed);
-
-// //       const updatedColumns = {
-// //         ...columns,
-// //         [source.droppableId]: { ...sourceColumn, tasks: sourceTasks },
-// //         [destination.droppableId]: { ...destColumn, tasks: destTasks }
-// //       };
-// //       setColumns(updatedColumns);
-// //     }
+// //     // Additional logout logic can be added here (e.g., clearing tokens, redirecting)
 // //   };
 
-//   const addColumn = () => {
-//     const columnId = `column-${Date.now()}`;
-//     const newColumn = { name: `New Column`, tasks: [] };
-//     setColumns({ ...columns, [columnId]: newColumn });
-//   };
+// //   return (
+// //     <PageContainer>
+// //       <Header>
+// //         <Title>Kanban Board</Title>
+// //         {loggedIn && (
+// //           <UserSection>
+// //             <WelcomeMessage>Welcome, {user.result.name} </WelcomeMessage>
+// //             <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+// //           </UserSection>
+// //         )}
+// //       </Header>
+// //       <BoardContainer>
+// //         <KanbanBoard/>
+// //       </BoardContainer>
+// //     </PageContainer>
+// //   );
+// // };
 
-//   const renameColumn = (id, newName) => {
-//     const updatedColumns = { ...columns, [id]: { ...columns[id], name: newName } };
-//     setColumns(updatedColumns);
-//   };
+// // export default KanbanPage;
 
-//   const removeColumn = (id) => {
-//     const updatedColumns = { ...columns };
-//     delete updatedColumns[id];
-//     setColumns(updatedColumns);
-//   };
+// // // Styled Components
 
-//   const addTask = (columnId, taskContent, assignee) => {
-//     const taskId = `task-${Date.now()}`;
-//     const newTask = { id: taskId, content: taskContent, assignee };
-//     const updatedColumn = { ...columns[columnId], tasks: [...columns[columnId].tasks, newTask] };
-//     setColumns({ ...columns, [columnId]: updatedColumn });
-//   };
+// // const PageContainer = styled.div`
+// //   font-family: Arial, sans-serif;
+// //   padding: 20px;
+// // `;
 
-//   const removeTask = (columnId, taskId) => {
-//     const updatedTasks = columns[columnId].tasks.filter(task => task.id !== taskId);
-//     const updatedColumn = { ...columns[columnId], tasks: updatedTasks };
-//     setColumns({ ...columns, [columnId]: updatedColumn });
+// // const Header = styled.header`
+// //   display: flex;
+// //   justify-content: center;
+// //   align-items: center;
+// //   margin-bottom: 30px;
+// //   position: relative;
+// // `;
+
+// // const Title = styled.h1`
+// //   font-size: 32px;
+// //   font-weight: bold;
+// //   text-align: center;
+// //   margin-right: 20px;
+// // `;
+
+// // const UserSection = styled.div`
+// //   position: absolute;
+// //   right: 20px;
+// //   display: flex;
+// //   align-items: center;
+// // `;
+
+// // const WelcomeMessage = styled.span`
+// //   font-size: 16px;
+// //   margin-right: 15px;
+// // `;
+
+// // const LogoutButton = styled.button`
+// //   background-color: #ff4d4f;
+// //   color: white;
+// //   border: none;
+// //   padding: 8px 15px;
+// //   font-size: 14px;
+// //   cursor: pointer;
+// //   border-radius: 5px;
+  
+// //   &:hover {
+// //     background-color: #ff7875;
+// //   }
+// // `;
+
+// // const BoardContainer = styled.div`
+// //   display: flex;
+// //   justify-content: space-between;
+// //   gap: 20px;
+// //   /* Kanban board layout styles go here */
+// // `;
+
+
+
+
+// import { useState } from 'react';
+// import React from 'react';
+// import styled from 'styled-components';
+// import KanbanBoard from '../Project/KanbanBoard';
+// import { useNavigate } from 'react-router-dom';
+
+// const KanbanPage = () => {
+//   const [loggedIn, setLoggedIn] = useState(true); 
+//   const user = JSON.parse(localStorage.getItem("user"));
+//   const navigate = useNavigate();
+
+//   const handleLogout = () => {
+//     localStorage.clear();
+//     navigate("/");
 //   };
 
 //   return (
 //     <PageContainer>
 //       <Header>
 //         <Title>Kanban Board</Title>
-//         <AddColumnButton onClick={addColumn}>Add Column</AddColumnButton>
+//         {loggedIn && (
+//           <UserSection>
+//             <WelcomeMessage>Welcome, {user.result.name} </WelcomeMessage>
+//             <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+//           </UserSection>
+//         )}
 //       </Header>
-
-//       <KanbanBoard
-//         columns={columns}
-//         // handleDragEnd={handleDragEnd}
-//         renameColumn={renameColumn}
-//         removeColumn={removeColumn}
-//         addTask={addTask}
-//         removeTask={removeTask}
-//       />
+//       <BoardContainer>
+//         <KanbanBoard />
+//       </BoardContainer>
 //     </PageContainer>
 //   );
 // };
@@ -125,28 +142,85 @@
 // `;
 
 // const Header = styled.header`
+//   position: relative; /* Enable absolute positioning for children */
 //   display: flex;
-//   justify-content: space-between;
 //   align-items: center;
 //   margin-bottom: 30px;
 // `;
 
 // const Title = styled.h1`
+//   position: absolute; /* Position the title absolutely */
+//   left: 50%;
+//   transform: translateX(-50%); /* Center the title horizontally */
 //   font-size: 32px;
+//   font-weight: bold;
+
+//   @media (max-width: 768px) {
+//     font-size: 28px;
+//   }
+
+//   @media (max-width: 480px) {
+//     font-size: 24px;
+//   }
 // `;
 
-// const AddColumnButton = styled.button`
-//   background-color: #4CAF50;
+// const UserSection = styled.div`
+//   margin-left: auto; /* Push UserSection to the far right */
+//   display: flex;
+//   align-items: center;
+//   gap: 10px; /* Add spacing between WelcomeMessage and LogoutButton */
+// `;
+
+// const WelcomeMessage = styled.span`
+//   font-size: 16px;
+
+//   @media (max-width: 768px) {
+//     font-size: 14px;
+//   }
+
+//   @media (max-width: 480px) {
+//     font-size: 12px;
+//   }
+// `;
+
+// const LogoutButton = styled.button`
+//   background-color: #ff4d4f;
 //   color: white;
 //   border: none;
-//   padding: 10px;
+//   padding: 8px 15px;
+//   font-size: 14px;
 //   cursor: pointer;
+//   border-radius: 5px;
+
+//   &:hover {
+//     background-color: #ff7875;
+//   }
+
+//   @media (max-width: 768px) {
+//     padding: 6px 12px;
+//     font-size: 12px;
+//   }
+
+//   @media (max-width: 480px) {
+//     padding: 5px 10px;
+//     font-size: 10px;
+//   }
 // `;
 
 
-// KanbanPage.js
+// const BoardContainer = styled.div`
+//   display: flex;
+//   flex-direction: column; /* Stack the Kanban board vertically */
+//   gap: 20px;
+
+//   @media (min-width: 769px) {
+//     flex-direction: row; /* Horizontal layout for larger screens */
+//     justify-content: space-between;
+//   }
+// `;
+
 import { useState } from 'react';
-import React  from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import KanbanBoard from '../Project/KanbanBoard';
 import { useNavigate } from 'react-router-dom';
@@ -155,13 +229,10 @@ const KanbanPage = () => {
   const [loggedIn, setLoggedIn] = useState(true); 
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
- 
 
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
-
-    // Additional logout logic can be added here (e.g., clearing tokens, redirecting)
   };
 
   return (
@@ -170,13 +241,13 @@ const KanbanPage = () => {
         <Title>Kanban Board</Title>
         {loggedIn && (
           <UserSection>
-            <WelcomeMessage>Welcome, {user.result.fullName} </WelcomeMessage>
+            <WelcomeMessage>Welcome, {user.result.name}</WelcomeMessage>
             <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
           </UserSection>
         )}
       </Header>
       <BoardContainer>
-        <KanbanBoard/>
+        <KanbanBoard />
       </BoardContainer>
     </PageContainer>
   );
@@ -189,33 +260,60 @@ export default KanbanPage;
 const PageContainer = styled.div`
   font-family: Arial, sans-serif;
   padding: 20px;
+  min-height: 94.5vh;
+  background: url('bg.jpg') no-repeat center center fixed; /* Replace with your image path */
+  background-size: cover;
+  color: #fff; /* Ensures text is visible on darker backgrounds */
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px;
+  }
 `;
 
 const Header = styled.header`
+  position: relative;
   display: flex;
-  justify-content: center;
   align-items: center;
   margin-bottom: 30px;
-  position: relative;
 `;
 
 const Title = styled.h1`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 32px;
   font-weight: bold;
-  text-align: center;
-  margin-right: 20px;
+
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+  }
 `;
 
 const UserSection = styled.div`
-  position: absolute;
-  right: 20px;
+  margin-left: auto;
   display: flex;
   align-items: center;
+  gap: 10px;
 `;
 
 const WelcomeMessage = styled.span`
   font-size: 16px;
-  margin-right: 15px;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
 
 const LogoutButton = styled.button`
@@ -226,18 +324,29 @@ const LogoutButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   border-radius: 5px;
-  
+
   &:hover {
     background-color: #ff7875;
+  }
+
+  @media (max-width: 768px) {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 5px 10px;
+    font-size: 10px;
   }
 `;
 
 const BoardContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 20px;
-  /* Kanban board layout styles go here */
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
-
-
-
