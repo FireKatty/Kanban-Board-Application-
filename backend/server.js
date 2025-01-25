@@ -35,7 +35,9 @@ const PORT = process.env.PORT // Default to 5432 if PORT is not specified in .en
 const authRoutes = require("./routes/authRoutes"); // Routes for authentication-related operations
 // Use routes for their corresponding base URL
 app.use('/api/auth', authRoutes); // All auth routes will be prefixed with '/api/auth'
-
+app.get("/",(req,res)=>{
+  res.send("Api Successful")
+});
 // Start the server and listen on the defined port
 app.listen(PORT, () => {
     connectToDatabase(); // Establish connection to the database when the server starts
