@@ -7,13 +7,16 @@ const app = express(); // Initialize Express application
 // Middleware to handle cross-origin requests
 
 const corsOptions = {
-    origin: "https://kanban-board-application-sigma.vercel.app/", // Replace with your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  };
+  origin: "https://kanban-board-application-sigma.vercel.app", // Removed trailing slash
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Ensure OPTIONS is included for preflight requests
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // Allow cookies or authentication credentials if needed
+};
 
 app.use(cors(corsOptions));
 
+// Handle preflight requests explicitly (optional, for additional compatibility)
+app.options('*', cors(corsOptions));
 
 
 // Middleware to parse incoming JSON data in requests
