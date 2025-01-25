@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
@@ -97,8 +97,12 @@ const PasswordLink = styled.div`
 `;
 
 const SubmitButton = styled(Input)`
+  height: 45px;
+  width: 100%;
+  display: flex;
+  margin-top:20px;
   background: #3498db;
-  border: 1px solid #2691d9;
+  border: 1px solidrgb(6, 40, 63);
   color: white;
   font-size: 18px;
   letter-spacing: 1px;
@@ -166,119 +170,175 @@ const SignupText = styled.div`
   }
 `;
 
+const ErrorText = styled.div`
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+`;
+
+
 const App = () => {
-    const [isLogin, setIsLogin] = useState(true);
-    const [passwordVisible, setPasswordVisible] = useState(false);
-    const [formData, setFormData] = useState({
+  const [isLogin, setIsLogin] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState(null);  // Error state
+  const [loading, setLoading] = useState(false);  // Loading state
+  const navigate = useNavigate();
+
+   // Reset form data when toggling between Login and Signup
+   useEffect(() => {
+    setFormData({
       name: "",
       email: "",
       password: "",
       confirmPassword: "",
     });
-    const navigate = useNavigate();
-  
-    const toggleForm = () => setIsLogin(!isLogin);
-  
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setFormData({ ...formData, [name]: value });
-    };
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      const url = isLogin ? "http://localhost:9876/api/auth/login" : "http://localhost:9876/api/auth/signup";
-      const payload = isLogin
-        ? { email: formData.email, password: formData.password }
-        : formData;
-  
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        const result = await response.json();
-        localStorage.setItem("user", JSON.stringify(result)); 
-        if(result.auth){
+    setError('');
+    }, [isLogin]);
+
+  const toggleForm = () => setIsLogin(!isLogin);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);  // Reset error message before submitting
+
+    const url = isLogin ? "http://localhost:9876/api/auth/login" : "http://localhost:9876/api/auth/signup";
+    const payload = isLogin
+      ? { email: formData.email, password: formData.password }
+      : formData;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || "An error occurred");
+      } else {
+        localStorage.setItem("user", JSON.stringify(result));
+        if (result.auth) {
           navigate("/board");
         }
-      } catch (error) {
-        console.error("Error:", error);
       }
-    };
-  
-    return (
-      <BackgroundImage>
-        <Content>
-          <Header>{isLogin ? "Login Form" : "Signup Form"}</Header>
-          <form onSubmit={handleSubmit}>
-            {!isLogin && (
-              <Field>
-                <Icon className="fa fa-user" />
-                <Input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Full Name"
-                />
-              </Field>
-            )}
-            <Field space>
-              <Icon className="fa fa-envelope" />
+    } catch (error) {
+      setError("Failed to connect to server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  return (
+    <BackgroundImage>
+      <Content>
+        <Header>{isLogin ? "Login Form" : "Signup Form"}</Header>
+        <form onSubmit={handleSubmit}>
+          {!isLogin && (
+            <Field>
+              <Icon className="fa fa-user" />
               <Input
-                type="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 required
-                placeholder="Email"
+                placeholder="Full Name"
               />
             </Field>
+          )}
+          <Field space>
+            <Icon className="fa fa-envelope" />
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="Email"
+            />
+          </Field>
+          <Field space>
+            <Icon className="fa fa-lock" />
+            <Input
+              type={passwordVisible ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Password"
+            />
+            <ShowButton
+              show
+              onClick={() => setPasswordVisible(!passwordVisible)}
+            >
+              <i className={passwordVisible ? "fa fa-eye-slash" : "fa fa-eye"} />
+            </ShowButton>
+          </Field>
+          {!isLogin && (
             <Field space>
               <Icon className="fa fa-lock" />
               <Input
                 type={passwordVisible ? "text" : "password"}
-                name="password"
-                value={formData.password}
+                name="confirmPassword"
+                value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                placeholder="Password"
+                placeholder="Confirm Password"
               />
-              <ShowButton
-                show
-                onClick={() => setPasswordVisible(!passwordVisible)}
-              >
-                <i className={passwordVisible ? "fa fa-eye-slash" : "fa fa-eye"} />
-              </ShowButton>
             </Field>
-            {!isLogin && (
-              <Field space>
-                <Icon className="fa fa-lock" />
-                <Input
-                  type={passwordVisible ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  placeholder="Confirm Password"
-                />
-              </Field>
-            )}
-            <Field>
-              <SubmitButton type="submit" value={isLogin ? "LOGIN" : "SIGNUP"} />
-            </Field>
-          </form>
-          <SignupText>
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <a href="#" onClick={toggleForm}>
-              {isLogin ? "Signup Now" : "Login Now"}
-            </a>
-          </SignupText>
-        </Content>
-      </BackgroundImage>
-    );
-  };
-  
-  export default App;
+          )}
+          {/* {!isLogin && <div style={{ marginBottom: "16px" }}></div>} */}
+          {/* {isLogin && (
+            <PasswordLink>
+              <a href="#">Forgot Password?</a>
+            </PasswordLink>
+          )} */}
+        
+            <SubmitButton type="submit" value={isLogin ? "LOGIN" : "SIGNUP"} />
+          
+        </form>
+        {/* {isLogin ? (
+          <>
+            <LoginText>Or login with</LoginText>
+            <SocialLinks>
+              <SocialButton first type="facebook">
+                <i className="fab fa-facebook-f">
+                  <span>Facebook</span>
+                </i>
+              </SocialButton>
+              <SocialButton type="instagram">
+                <i className="fab fa-instagram">
+                  <span>Instagram</span>
+                </i>
+              </SocialButton>
+            </SocialLinks>
+          </>
+        ) : null} */}
+        {error && <ErrorText>{error}</ErrorText>}
+        {loading && <p style={{ color: "white" }}>Processing...</p>}
+        <SignupText>
+          {isLogin ? "Don't have an account? " : "Already have an account? "}
+          <a href="#" onClick={toggleForm}>
+            {isLogin ? "Signup Now" : "Login Now"}
+          </a>
+        </SignupText>
+      </Content>
+    </BackgroundImage>
+  );
+};
+
+export default App;
