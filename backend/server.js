@@ -26,7 +26,7 @@ dotenv.config(); // Ensures environment variables are loaded from the .env file
 const connectToDatabase = require("./db/connectDatabase"); // Function to connect to your database
 
 // Set up the port to either the one in environment variables or 5432
-const PORT = process.env.PORT || 5432; // Default to 5432 if PORT is not specified in .env
+const PORT = process.env.PORT // Default to 5432 if PORT is not specified in .env
 
 // Import route modules for different API endpoints
 const authRoutes = require("./routes/authRoutes"); // Routes for authentication-related operations
