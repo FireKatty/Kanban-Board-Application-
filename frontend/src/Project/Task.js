@@ -103,6 +103,7 @@ import styled from "styled-components";
 import { FaEdit, FaTrash, FaCheck } from "react-icons/fa";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useKanban } from "./KanbanContext";
 
 const TaskWrapper = styled.div`
   background-color: #f9f9f9;
@@ -194,13 +195,14 @@ const SortableTask = ({
     id,
     task,
     columnId,
-    deleteTask,
-    toggleTaskCompletion,
-    editTask,
-    columns,
-    users,
     assignUserToTask,
   }) => {
+    const {columns,setEditingTask,setColumns}= useKanban();
+    const users = [
+      { id: 1, name: "Alice", avatar: "https://i.pravatar.cc/40?u=1" },
+      { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/40?u=2" },
+      { id: 3, name: "Charlie", avatar: "https://i.pravatar.cc/40?u=3" },
+  ];
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
       id,
     });
@@ -208,6 +210,40 @@ const SortableTask = ({
     const style = {
       transform: CSS.Transform.toString(transform),
       transition,
+    };
+
+    const deleteTask = (columnId, taskId) => {
+      setColumns((prevColumns) => ({
+        ...prevColumns,
+        [columnId]: {
+          ...prevColumns[columnId],
+          tasks: prevColumns[columnId].tasks.filter((task) => task.id !== taskId),
+        },
+      }));
+    };
+    
+    const toggleTaskCompletion = (columnId, taskId) => {
+      setColumns((prevColumns) => {
+        const updatedTasks = prevColumns[columnId].tasks.map((task) =>
+          task.id === taskId ? { ...task, completed: !task.completed } : task
+        );
+        return {
+          ...prevColumns,
+          [columnId]: {
+            ...prevColumns[columnId],
+            tasks: updatedTasks,
+          },
+        };
+      });
+    };
+    
+    const editTask = (columnId, taskId) => {
+      const task = columns[columnId]?.tasks.find((t) => t.id === taskId);
+      if (task) {
+        setEditingTask({ ...task, columnId }); // Pass task details and columnId to editing state
+      } else {
+        alert("Task not found.");
+      } 
     };
   
     // Safely handle `assignedUsers`

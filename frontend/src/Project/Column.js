@@ -58,6 +58,7 @@ import styled from "styled-components";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
 import SortableTask from "./Task";
+import { useKanban } from './KanbanContext'; // Import the context
 
 const ColumnWrapper = styled.div`
   background-color: #f4f5f7;
@@ -72,30 +73,8 @@ const ColumnTitle = styled.h3`
   text-align: center;
 `;
 
-const Column = ({ columnId, columns, setColumns, deleteTask, toggleTaskCompletion, editTask }) => {
-    const mockUsers = [
-        { id: 1, name: "Alice", avatar: "https://i.pravatar.cc/40?u=1" },
-        { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/40?u=2" },
-        { id: 3, name: "Charlie", avatar: "https://i.pravatar.cc/40?u=3" },
-    ];
-
-    // const assignUserToTask = (taskId, userId, columnId) => {
-    //     setColumns((prevColumns) => ({
-    //       ...prevColumns,
-    //       [columnId]: {
-    //         ...prevColumns[columnId],
-    //         tasks: prevColumns[columnId].tasks.map((task) =>
-    //           task.id === taskId
-    //             ? {
-    //                 ...task,
-    //                 assignedUsers: [...new Set([...(task.assignedUsers || []), userId])],
-    //               }
-    //             : task
-    //         ),
-    //       },
-    //     }));
-    // };
-      
+const Column = ({ columnId}) => {
+  const { columns } = useKanban();// Access state
   const { setNodeRef } = useDroppable({ id: columnId });
     // console.log(columns[columnId].assignedUsers)
   return (
@@ -108,11 +87,6 @@ const Column = ({ columnId, columns, setColumns, deleteTask, toggleTaskCompletio
             id={task.id}
             task={task}
             columnId={columnId}
-            deleteTask={deleteTask}
-            toggleTaskCompletion={toggleTaskCompletion}
-            editTask={editTask}
-            columns={columns}
-            users = {mockUsers}
             assignUserToTask={task.assignedUsers.split(",")}
           />
         ))}

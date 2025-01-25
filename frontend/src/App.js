@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-// import Board from './components/Board';
-import KanbanPage from './pages/KanbanPage';
+// App.js or main entry file
+import React from 'react';
+import { KanbanProvider } from './Project/KanbanContext';
+import KanbanBoard from './pages/KanbanPage';
 
 function App() {
   return (
-    <div className="App">
-      <KanbanPage/>
-      {/* <h1>Kanban Board</h1>
-      <Board columns={columns} addTask={addTask} /> */}
-    </div>
+    <KanbanProvider>
+      <KanbanBoard />
+    </KanbanProvider>
   );
 }
 

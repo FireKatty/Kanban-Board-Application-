@@ -1067,6 +1067,7 @@ import React, { useState } from 'react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import styled from 'styled-components';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { useKanban } from './KanbanContext';
 import Column from './Column';
 
 // Styled Components
@@ -1242,19 +1243,34 @@ const RenameButton = styled.button`
 
 
 const KanbanBoard = () => {
-  const [columns, setColumns] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newColumnName, setNewColumnName] = useState('');
-  const [isRenaming, setIsRenaming] = useState(null);
-  const [renameValue, setRenameValue] = useState('');
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [columnToRemove, setColumnToRemove] = useState(null);
-  const [selectedColumnId, setSelectedColumnId] = useState(null);
-  const [editingTask, setEditingTask] = useState(null);
-  const [taskToAdd, setTaskToAdd] = useState('');
-  const [taskDescription, setTaskDescription] = useState('');
-  const [taskDueDate, setTaskDueDate] = useState('');
-  const [assignedUsersId, setAssignedUsersId] = useState('');
+  // const [columns, setColumns] = useState({});
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [newColumnName, setNewColumnName] = useState('');
+  // const [isRenaming, setIsRenaming] = useState(null);
+  // const [renameValue, setRenameValue] = useState('');
+  // const [showConfirm, setShowConfirm] = useState(false);
+  // const [columnToRemove, setColumnToRemove] = useState(null);
+  // const [selectedColumnId, setSelectedColumnId] = useState(null);
+  // const [editingTask, setEditingTask] = useState(null);
+  // const [taskToAdd, setTaskToAdd] = useState('');
+  // const [taskDescription, setTaskDescription] = useState('');
+  // const [taskDueDate, setTaskDueDate] = useState('');
+  // const [assignedUsersId, setAssignedUsersId] = useState('');
+  const {
+    columns, setColumns,
+    isModalOpen, setIsModalOpen,
+    newColumnName, setNewColumnName,
+    isRenaming, setIsRenaming,
+    renameValue, setRenameValue,
+    showConfirm, setShowConfirm,
+    columnToRemove, setColumnToRemove,
+    selectedColumnId, setSelectedColumnId,
+    editingTask, setEditingTask,
+    taskToAdd, setTaskToAdd,
+    taskDescription, setTaskDescription,
+    taskDueDate, setTaskDueDate,
+    assignedUsersId, setAssignedUsersId,
+  } = useKanban(); // Get state from context
   
 
   const sensors = useSensors(
@@ -1337,39 +1353,39 @@ const KanbanBoard = () => {
     setAssignedUsersId('');
   };
   
-  const deleteTask = (columnId, taskId) => {
-    setColumns((prevColumns) => ({
-      ...prevColumns,
-      [columnId]: {
-        ...prevColumns[columnId],
-        tasks: prevColumns[columnId].tasks.filter((task) => task.id !== taskId),
-      },
-    }));
-  };
+  // const deleteTask = (columnId, taskId) => {
+  //   setColumns((prevColumns) => ({
+  //     ...prevColumns,
+  //     [columnId]: {
+  //       ...prevColumns[columnId],
+  //       tasks: prevColumns[columnId].tasks.filter((task) => task.id !== taskId),
+  //     },
+  //   }));
+  // };
   
-  const toggleTaskCompletion = (columnId, taskId) => {
-    setColumns((prevColumns) => {
-      const updatedTasks = prevColumns[columnId].tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      );
-      return {
-        ...prevColumns,
-        [columnId]: {
-          ...prevColumns[columnId],
-          tasks: updatedTasks,
-        },
-      };
-    });
-  };
+  // const toggleTaskCompletion = (columnId, taskId) => {
+  //   setColumns((prevColumns) => {
+  //     const updatedTasks = prevColumns[columnId].tasks.map((task) =>
+  //       task.id === taskId ? { ...task, completed: !task.completed } : task
+  //     );
+  //     return {
+  //       ...prevColumns,
+  //       [columnId]: {
+  //         ...prevColumns[columnId],
+  //         tasks: updatedTasks,
+  //       },
+  //     };
+  //   });
+  // };
   
-  const editTask = (columnId, taskId) => {
-    const task = columns[columnId]?.tasks.find((t) => t.id === taskId);
-    if (task) {
-      setEditingTask({ ...task, columnId }); // Pass task details and columnId to editing state
-    } else {
-      alert("Task not found.");
-    } 
-  };
+  // const editTask = (columnId, taskId) => {
+  //   const task = columns[columnId]?.tasks.find((t) => t.id === taskId);
+  //   if (task) {
+  //     setEditingTask({ ...task, columnId }); // Pass task details and columnId to editing state
+  //   } else {
+  //     alert("Task not found.");
+  //   } 
+  // };
   
   const saveEditedTask = () => {
     const { columnId, id, title, description, dueDate, assignedUsers } = editingTask;
@@ -1480,12 +1496,6 @@ const KanbanBoard = () => {
               <Column
                  key={columnId}
                  columnId={columnId}
-                 columns={columns}
-                 setColumns={setColumns}
-                 deleteTask={deleteTask}
-                 toggleTaskCompletion={toggleTaskCompletion}
-                 editTask={editTask}
-
               />
               <AddColumnButton onClick={() => setSelectedColumnId(columnId)} >Add Task</AddColumnButton>
             </ColumnWrapper>
@@ -1655,3 +1665,4 @@ const KanbanBoard = () => {
 };
 
 export default KanbanBoard;
+
