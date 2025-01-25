@@ -79,7 +79,6 @@ const Column = ({ columnId}) => {
     // console.log(columns[columnId].assignedUsers)
   return (
     <ColumnWrapper ref={setNodeRef}>
-      <ColumnTitle>{columns[columnId].title}</ColumnTitle>
       <SortableContext items={columns[columnId].tasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
         {columns[columnId].tasks.map((task) => (
           <SortableTask
