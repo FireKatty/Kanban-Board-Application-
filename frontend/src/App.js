@@ -1,76 +1,100 @@
+// // App.js or main entry file
+// import React from 'react';
+// import { KanbanProvider } from './Project/KanbanContext';
+// import KanbanBoard from './pages/KanbanPage';
+
+// function App() {
+//   return (
+//     <KanbanProvider>
+//       <KanbanBoard />
+//     </KanbanProvider>
+//   );
+// }
+
+// export default App;
+
 // App.js or main entry file
-import React from 'react';
-import { KanbanProvider } from './Project/KanbanContext';
-import KanbanBoard from './pages/KanbanPage';
+// import React from 'react';
+// import { KanbanProvider } from './Project/KanbanContext';
+// import KanbanBoard from './components/Login';
 
-function App() {
-  return (
-    <KanbanProvider>
-      <KanbanBoard />
-    </KanbanProvider>
-  );
-}
+// function App() {
+//   return (
+//     <KanbanProvider>
+//       <KanbanBoard />
+//     </KanbanProvider>
+//   );
+// }
 
-export default App;
+// export default App;
 
-// import React, { useState } from 'react';
-// import Columns from './components/Columns';
-
-// const initialColumns = {
-//   todo: {
-//     title: 'To Do',
-//     tasks: [
-//       { id: '1', title: 'Task 1', description: 'Description 1', dueDate: '2025-01-24', completed: false },
-//       { id: '2', title: 'Task 2', description: 'Description 2', dueDate: '2025-01-25', completed: false },
-//     ],
-//   },
-//   inProgress: {
-//     title: 'In Progress',
-//     tasks: [
-//       { id: '3', title: 'Task 3', description: 'Description 3', dueDate: '2025-01-26', completed: false },
-//     ],
-//   },
-//   done: {
-//     title: 'Done',
-//     tasks: [],
-//   },
-// };
+// import React from "react";
+// import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+// import PrivateRoute from "./components/ProtectedRoute";
+// import { KanbanProvider } from './Project/KanbanContext';
+// import Login from './components/Login';
+// import KanbanBoard from './pages/KanbanPage';
 
 // const App = () => {
-//   const [columns, setColumns] = useState(initialColumns);
-
-//   const deleteTask = (columnId, taskId) => {
-//     setColumns((prev) => ({
-//       ...prev,
-//       [columnId]: {
-//         ...prev[columnId],
-//         tasks: prev[columnId].tasks.filter((task) => task.id !== taskId),
-//       },
-//     }));
-//   };
-
-//   const toggleTaskCompletion = (columnId, taskId) => {
-//     setColumns((prev) => ({
-//       ...prev,
-//       [columnId]: {
-//         ...prev[columnId],
-//         tasks: prev[columnId].tasks.map((task) =>
-//           task.id === taskId ? { ...task, completed: !task.completed } : task
-//         ),
-//       },
-//     }));
-//   };
-
-//   const editTask = (columnId, taskId) => {
-//     // Implement edit task logic here
-//   };
-
+//   // Check if user is logged in
+//   const user = JSON.parse(localStorage.getItem("user"));
+  
 //   return (
-//     <div>
-//       <h1>Kanban Board</h1>
-//       <Columns columnsData={columns} setColumns={setColumns} />
-//     </div>
+//     <Router>
+//       <Routes>   
+//       <Route path="/" element={<Login />} />
+//         {/* Role-Based Protected Routes */}
+//         <Route
+//           path="/board"
+//           element={
+//             <PrivateRoute>
+//               <KanbanProvider>
+//                 <KanbanBoard />
+//         /    </KanbanProvider>
+//             </PrivateRoute>
+//           }
+//         />
+//         {/* Fallback Route */}
+//         <Route path="*" element={<Navigate to="/" />} />
+//       </Routes>
+//     </Router>
 //   );
 // };
 
 // export default App;
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import PrivateRoute from "./components/ProtectedRoute";
+import { KanbanProvider } from './Project/KanbanContext';
+import Login from './components/Login';
+import KanbanBoard from './pages/KanbanPage';
+
+const App = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  return (
+    <Router>
+      <Routes>
+        {/* Redirect to board if user is logged in, else show Login */}
+        <Route path="/" element={user ? <Navigate to="/board" replace /> : <Login />} />
+
+        {/* Protected Route for Kanban Board */}
+        <Route
+          path="/board"
+          element={
+            <PrivateRoute>
+              <KanbanProvider>
+                <KanbanBoard />
+              </KanbanProvider>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Redirect invalid routes */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;

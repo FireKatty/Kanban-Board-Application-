@@ -147,16 +147,20 @@
 // KanbanPage.js
 import { useState } from 'react';
 import React  from 'react';
-import Columns from '../components/Columns'; // Import the Columns component
-
 import styled from 'styled-components';
 import KanbanBoard from '../Project/KanbanBoard';
+import { useNavigate } from 'react-router-dom';
 
-const KanbanPage = ({ user }) => {
+const KanbanPage = () => {
   const [loggedIn, setLoggedIn] = useState(true); 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+ 
 
   const handleLogout = () => {
-    setLoggedIn(false);
+    localStorage.clear();
+    navigate("/");
+
     // Additional logout logic can be added here (e.g., clearing tokens, redirecting)
   };
 
@@ -166,7 +170,7 @@ const KanbanPage = ({ user }) => {
         <Title>Kanban Board</Title>
         {loggedIn && (
           <UserSection>
-            <WelcomeMessage>Welcome, {user}</WelcomeMessage>
+            <WelcomeMessage>Welcome, {user.result.fullName} </WelcomeMessage>
             <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
           </UserSection>
         )}
