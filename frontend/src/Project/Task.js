@@ -199,7 +199,7 @@ const SortableTask = ({
     editTask,
     columns,
     users,
-    // assignUserToTask,
+    assignUserToTask,
   }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
       id,
@@ -211,31 +211,19 @@ const SortableTask = ({
     };
   
     // Safely handle `assignedUsers`
-    console.log("start")
+    // console.log("start")
     
     // const arr = columns[columnId].tasks.map((user)=>user.assignedUsers.split(","))
     // console.log(arr)
     // arr.forEach(element => {
     //     element.map((userId) => users.find((user) => userId == user.id)).filter((user) => user !== undefined)
     // });
-    const arr = columns[columnId].tasks.map((task) => task.assignedUsers.split(","));
-
-    const assignedUsers = arr.map((element) =>
-    element
-        .map((userId) => users.find((user) => userId == user.id)) // Find user objects
-        .filter((user) => user !== undefined) // Filter out undefined users
-    );
-
-    // console.log(allUsers);
-    assignedUsers.map((userArray, index) => (
-        
-          userArray.map((user) => user)))
-        
-      
-    
-    console.log(assignedUsers)
-    
-    console.log(assignedUsers.map((user)=>user.map((userid)=>userid)))
+    // const arr = columns[columnId].tasks.map((task) => task.assignedUsers.split(","));
+    // console.log(assignUserToTask)
+    const assignedUsers = assignUserToTask
+      .map((element) => users.find((user) => element == user.id)) // Find user objects
+      .filter((user) => user !== undefined); // Filter out undefined users      
+  
   
     return (
       <TaskWrapper ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -257,14 +245,9 @@ const SortableTask = ({
           <TaskDescription>{task.description}</TaskDescription>
           <small>Due: {task.dueDate}</small>
           <AssignedUsers>
-          {assignedUsers.map((userArray, index) => (
-            <div key={index}>
-                {userArray.map((user) => (
-                <UserAvatar key={user.id} src={user.avatar} title={user.name} />
-                ))}
-            </div>
-            ))}
-
+          {assignedUsers.map((user) => (
+            <UserAvatar key={user.id} src={user.avatar} title={user.name} />
+          ))}
              {/* <select
               onChange={(e) => {
                 assignUserToTask(task.id, parseInt(e.target.value, 10));

@@ -1372,7 +1372,7 @@ const KanbanBoard = () => {
   };
   
   const saveEditedTask = () => {
-    const { columnId, id, title, description, dueDate } = editingTask;
+    const { columnId, id, title, description, dueDate, assignedUsers } = editingTask;
   
     if (!title.trim() || !description.trim() || !dueDate.trim()) {
       alert("All fields are required to save the task.");
@@ -1382,7 +1382,7 @@ const KanbanBoard = () => {
     setColumns((prevColumns) => {
       const updatedTasks = prevColumns[columnId].tasks.map((task) =>
         task.id === id
-          ? { ...task, title, description, dueDate } // Update task details
+          ? { ...task, title, description, dueDate, assignedUsers } // Update task details
           : task
       );
       return {
@@ -1448,6 +1448,7 @@ const KanbanBoard = () => {
 
   return (
     <div>
+        <AddColumnButton onClick={() => setIsModalOpen(true)}>Add Column</AddColumnButton>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <ColumnsContainer>
           {Object.keys(columns).map((columnId) => (
@@ -1492,7 +1493,7 @@ const KanbanBoard = () => {
         </ColumnsContainer>
       </DndContext>
 
-      <AddColumnButton onClick={() => setIsModalOpen(true)}>Add Column</AddColumnButton>
+      
 
       {isModalOpen && (
         <ConfirmDialog>
@@ -1633,6 +1634,12 @@ const KanbanBoard = () => {
               onChange={(e) =>
                 setEditingTask({ ...editingTask, dueDate: e.target.value })
               }
+            />
+            <Input 
+                type='text'
+                value = {editingTask.assignedUsers}
+                placeholder="Enter Assign Users Ids"
+                onChange={(e) => setEditingTask({...editingTask,assignedUsers:e.target.value})}
             />
              
             {/* Action Buttons */}

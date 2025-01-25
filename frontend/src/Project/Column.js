@@ -79,22 +79,22 @@ const Column = ({ columnId, columns, setColumns, deleteTask, toggleTaskCompletio
         { id: 3, name: "Charlie", avatar: "https://i.pravatar.cc/40?u=3" },
     ];
 
-    const assignUserToTask = (taskId, userId, columnId) => {
-        setColumns((prevColumns) => ({
-          ...prevColumns,
-          [columnId]: {
-            ...prevColumns[columnId],
-            tasks: prevColumns[columnId].tasks.map((task) =>
-              task.id === taskId
-                ? {
-                    ...task,
-                    assignedUsers: [...new Set([...(task.assignedUsers || []), userId])],
-                  }
-                : task
-            ),
-          },
-        }));
-    };
+    // const assignUserToTask = (taskId, userId, columnId) => {
+    //     setColumns((prevColumns) => ({
+    //       ...prevColumns,
+    //       [columnId]: {
+    //         ...prevColumns[columnId],
+    //         tasks: prevColumns[columnId].tasks.map((task) =>
+    //           task.id === taskId
+    //             ? {
+    //                 ...task,
+    //                 assignedUsers: [...new Set([...(task.assignedUsers || []), userId])],
+    //               }
+    //             : task
+    //         ),
+    //       },
+    //     }));
+    // };
       
   const { setNodeRef } = useDroppable({ id: columnId });
     // console.log(columns[columnId].assignedUsers)
@@ -113,7 +113,7 @@ const Column = ({ columnId, columns, setColumns, deleteTask, toggleTaskCompletio
             editTask={editTask}
             columns={columns}
             users = {mockUsers}
-            assignUserToTask={assignUserToTask}
+            assignUserToTask={task.assignedUsers.split(",")}
           />
         ))}
       </SortableContext>
