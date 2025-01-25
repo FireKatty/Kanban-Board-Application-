@@ -212,8 +212,7 @@ const App = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);  // Reset error message before submitting
-
-    const url = isLogin ? "http://localhost:9876/api/auth/login" : "http://localhost:9876/api/auth/signup";
+    const url = isLogin ? "https://kanban-board-application-y818.onrender.com/api/auth/login" : "https://kanban-board-application-y818.onrender.com/api/auth/signup";
     const payload = isLogin
       ? { email: formData.email, password: formData.password }
       : formData;

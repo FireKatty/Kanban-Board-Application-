@@ -6,13 +6,13 @@ const app = express(); // Initialize Express application
 
 // Middleware to handle cross-origin requests
 
-// const corsOptions = {
-//     origin: "https://school-management-app-virid.vercel.app/", // Replace with your frontend URL
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//   };
+const corsOptions = {
+    origin: "https://kanban-board-application-sigma.vercel.app/", // Replace with your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  };
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 
 
