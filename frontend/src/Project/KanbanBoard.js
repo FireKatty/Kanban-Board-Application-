@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import styled from 'styled-components';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaCalendarAlt } from 'react-icons/fa';
 import { useKanban } from '../context/KanbanContext';
 import Column from './Column';
 
 // Styled Components
 
 const ColumnsContainer = styled.div`
+
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
@@ -28,6 +29,7 @@ const ColumnWrapper = styled.div`
   min-height: 100px; /* Minimum height to maintain structure */
   height: auto; /* Allow height to depend on content */
   background-color: #f4f5f7;
+  background-color: rgba(0, 0, 0, 0.1);
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 1);
@@ -55,12 +57,16 @@ const AddColumnButton = styled.button`
 `;
 
 const Input = styled.input`
+  background-color: rgba(0, 0, 0, 0.8);
+  color:white;
   padding: 5px;
   margin: 5px 0;
   border-radius: 5px;
   border: 1px solid #ccc;
   width: 100%;
 `;
+
+
 
 const ConfirmDialog = styled.div`
   position: fixed;
@@ -75,7 +81,8 @@ const ConfirmDialog = styled.div`
 `;
 
 const ConfirmBox = styled.div`
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  // background-color: white;
   padding: 20px;
   border-radius: 8px;
   text-align: center;
@@ -125,7 +132,8 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContainer = styled.div`
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  // background-color: white;
   padding: 20px;
   border-radius: 8px;
   width: 400px;
@@ -143,11 +151,13 @@ const ModalButton = styled.button`
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s;
+  margin: 10px;  /* Added margin to create gap around the button */
 
   &:hover {
     background-color: #0056b3;
   }
 `;
+
 
 const ColumnTitle = styled.h2`
   color: black;
@@ -177,6 +187,33 @@ const RenameButton = styled.button`
     background-color: #388e3c;
   }
 `;
+
+const DateInputWithIcon = styled.div`
+  position: relative;
+  display: inline-block;
+  width: 100%;
+   
+
+  input[type="date"] {
+    background-color: rgba(0, 0, 0, 0.8);
+    color:white;
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 98%;
+  }
+
+  .icon {
+    position: absolute;
+    top: 50%;
+    right: 0px;
+    transform: translateY(-50%);
+    color: white;
+    pointer-events: none; /* Prevent icon from blocking the input */
+  }
+`;
+
 
 
 const KanbanBoard = () => {
@@ -233,12 +270,21 @@ const KanbanBoard = () => {
     setRenameValue('');
   };
 
-  const confirmRemoveColumn = () => {
-    const newColumns = { ...columns };
-    delete newColumns[columnToRemove];
-    setColumns(newColumns);
-    setShowConfirm(false);
+  // Show confirmation dialog for removing column
+  const handleRemoveColumnClick = (columnId) => {
+    setColumnToRemove(columnId); // Set the column to remove
+    setShowConfirm(true); // Show the confirmation dialog
   };
+
+  const confirmRemoveColumn = () => {
+    setColumns((prev) => {
+      const newCols = { ...prev }; // Create a shallow copy of the previous columns
+      delete newCols[columnToRemove]; // Delete the column with the specified columnId
+      return newCols; // Return the updated columns object
+    });
+    setShowConfirm(false); // Close the confirmation dialog
+  };
+
 
   const cancelRemoveColumn = () => {
     setShowConfirm(false);
@@ -355,7 +401,7 @@ const KanbanBoard = () => {
 
   return (
     <div>
-        <AddColumnButton onClick={() => setIsModalOpen(true)}>Add Column</AddColumnButton>
+        {/* <AddColumnButton onClick={() => setIsModalOpen(true)}>Add Column</AddColumnButton> */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <ColumnsContainer>
           {Object.keys(columns).map((columnId) => (
@@ -377,8 +423,8 @@ const KanbanBoard = () => {
                         <RenameButton onClick={() => { setIsRenaming(columnId); setRenameValue(columns[columnId]?.title); }}>
                         <FaEdit />
                         </RenameButton>
-                        <button onClick={() => { setColumns((prev) => { const newCols = { ...prev }; delete newCols[columnId]; return newCols; });  }}>
-                        <FaTrash />
+                        <button onClick={() => handleRemoveColumnClick(columnId)}>
+                          <FaTrash />
                         </button>
                     </ColumnActions>
                   </>
@@ -450,14 +496,21 @@ const KanbanBoard = () => {
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 resize: 'vertical',
+                color: 'white', // Text color
+                backgroundColor: 'rgba(0, 0, 0, 0.8)', // Background color
+                outline: 'none', // To remove any default focus outline
               }}
+              
             />
             {/* Task Due Date */}
-            <Input
-              type="date"
-              value={taskDueDate}
-              onChange={(e) => setTaskDueDate(e.target.value)}
-            />
+            <DateInputWithIcon>
+              <input
+                type="date"
+                value={taskDueDate}
+                onChange={(e) => setTaskDueDate(e.target.value)}
+              />
+              <FaCalendarAlt className="icon" />
+            </DateInputWithIcon>
 
             <Input 
                 type='text'
@@ -526,6 +579,9 @@ const KanbanBoard = () => {
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 resize: 'vertical',
+                color: 'white', // Text color
+                backgroundColor: 'rgba(0, 0, 0, 0.8)', // Background color
+                outline: 'none', // To remove any default focus outline
               }}
             />
             {/* Task Due Date */}

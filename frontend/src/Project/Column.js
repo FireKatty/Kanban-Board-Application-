@@ -7,7 +7,8 @@ import SortableTask from "./Task";
 import { useKanban } from '../context/KanbanContext'; // Import the context
 
 const ColumnWrapper = styled.div`
-  background-color: #f4f5f7;
+  background-color: rgba(0, 0, 0, 0);
+  // background-color: #f4f5f7;
   padding: 15px;
   border-radius: 10px;
   width: 300px;

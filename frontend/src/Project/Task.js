@@ -10,7 +10,8 @@ import { useKanban } from "../context/KanbanContext";
 
 
 const TaskWrapper = styled.div`
-  background-color: #f9f9f9;
+  // background-color: #f9f9f9;
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 15px;
@@ -46,13 +47,14 @@ const TaskTitle = styled.h4`
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color:rgb(213, 185, 185);
 `;
 
 const TaskDescription = styled.p`
+  color:rgb(118, 152, 152);
   margin: 8px 0;
   font-size: 14px;
-  color: #666;
+  // color: #666;
 `;
 
 const TaskActions = styled.div`
