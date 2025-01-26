@@ -14,12 +14,6 @@ const SignupSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
-  // phoneNumber: {
-  //   type: String,
-  //   required: true,
-  //   unique: true,
-  //   match: [/^\d{10}$/, 'Phone number must be 10 digits'],
-  // },
   password: {
     type: String,
     required: true,
