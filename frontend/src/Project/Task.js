@@ -2,10 +2,12 @@
 // export default SortableTask;
 import React from "react";
 import styled from "styled-components";
-import { FaEdit, FaTrash, FaCheck } from "react-icons/fa";
+import { FaEdit, FaTrash, FaCheck} from "react-icons/fa";
+import { AiOutlineClockCircle } from "react-icons/ai";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useKanban } from "../context/KanbanContext";
+
 
 const TaskWrapper = styled.div`
   background-color: #f9f9f9;
@@ -151,8 +153,7 @@ const SortableTask = ({
     const assignedUsers = assignUserToTask
       .map((element) => users.find((user) => element == user.id)) // Find user objects
       .filter((user) => user !== undefined); // Filter out undefined users      
-  
-  
+     
     return (
       <TaskWrapper ref={setNodeRef} style={style} {...attributes} {...listeners}>
         <TaskDetails>
@@ -160,7 +161,7 @@ const SortableTask = ({
             <TaskTitle>{task.title}</TaskTitle>
             <TaskActions>
               <TaskButton onClick={(e) => toggleTaskCompletion(columnId, task.id)}>
-                {task.completed ? <FaCheck /> : "Complete"}
+                {task.completed ? <FaCheck color="green" size={15} title="Complete" /> : <AiOutlineClockCircle size={15} color="red"  title="Incomplete"/>}
               </TaskButton>
               <TaskButton onClick={(e) => editTask(columnId, task.id)}>
                 <FaEdit />
