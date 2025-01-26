@@ -1,218 +1,27 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import styled from 'styled-components';
 import { FaEdit, FaTrash, FaCalendarAlt } from 'react-icons/fa';
 import { useKanban } from '../context/KanbanContext';
 import Column from './Column';
+import {
+  ColumnsContainer,
+  ColumnWrapper,
+  AddColumnButton,
+  Input,
+  ConfirmDialog,
+  ConfirmBox,
+  ConfirmButton,
+  CancelButton,
+  ModalOverlay,
+  ModalContainer,
+  ModalButton,
+  ColumnTitle,
+  ColumnActions,
+  RenameButton,
+  DateInputWithIcon
+} from '../Style Component/KanbanBoard.js';
 
-// Styled Components
-
-const ColumnsContainer = styled.div`
-
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding: 20px;
-  justify-content: flex-start;
-  align-items: flex-start; /* Prevents columns from stretching vertically */
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-  }
-`;
-
-const ColumnWrapper = styled.div`
-  min-width: 200px; /* Minimum width for smaller columns */
-  width: fit-content; /* Adjust width to fit the content */
-  min-height: 100px; /* Minimum height to maintain structure */
-  height: auto; /* Allow height to depend on content */
-  background-color: #f4f5f7;
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 1);
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* Space between tasks within the column */
-//   align-items: flex-start; /* Align content within the column */
-`;
-
-
-const AddColumnButton = styled.button`
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-const Input = styled.input`
-  background-color: rgba(0, 0, 0, 0.8);
-  color:white;
-  padding: 5px;
-  margin: 5px 0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  width: 100%;
-`;
-
-
-
-const ConfirmDialog = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ConfirmBox = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
-  // background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-`;
-
-const ConfirmButton = styled.button`
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  margin: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-const CancelButton = styled.button`
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  margin: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #d32f2f;
-  }
-`;
-
-// Modal Styles
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ModalContainer = styled.div`
-  background-color: rgba(0, 0, 0, 0.7);
-  // background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const ModalButton = styled.button`
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-  margin: 10px;  /* Added margin to create gap around the button */
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-
-const ColumnTitle = styled.h2`
-  color: black;
-  font-size: 18px;
-  margin-bottom: 15px;
-  text-align: center;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ColumnActions = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const RenameButton = styled.button`
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #388e3c;
-  }
-`;
-
-const DateInputWithIcon = styled.div`
-  position: relative;
-  display: inline-block;
-  width: 100%;
-   
-
-  input[type="date"] {
-    background-color: rgba(0, 0, 0, 0.8);
-    color:white;
-    padding: 5px;
-    margin: 5px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 98%;
-  }
-
-  .icon {
-    position: absolute;
-    top: 50%;
-    right: 0px;
-    transform: translateY(-50%);
-    color: white;
-    pointer-events: none; /* Prevent icon from blocking the input */
-  }
-`;
 
 
 
@@ -421,10 +230,10 @@ const KanbanBoard = () => {
                     {columns[columnId]?.title}
                     <ColumnActions>
                         <RenameButton onClick={() => { setIsRenaming(columnId); setRenameValue(columns[columnId]?.title); }}>
-                        <FaEdit />
+                        <FaEdit size={20} />
                         </RenameButton>
                         <button onClick={() => handleRemoveColumnClick(columnId)}>
-                          <FaTrash />
+                          <FaTrash size={15} />
                         </button>
                     </ColumnActions>
                   </>

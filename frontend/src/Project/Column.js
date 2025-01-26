@@ -15,10 +15,6 @@ const ColumnWrapper = styled.div`
   margin: 10px;
 `;
 
-// const ColumnTitle = styled.h3`
-//   margin: 0 0 10px;
-//   text-align: center;
-// `;
 
 const Column = ({ columnId}) => {
   const { columns } = useKanban();// Access state
