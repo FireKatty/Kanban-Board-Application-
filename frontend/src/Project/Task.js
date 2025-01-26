@@ -27,13 +27,8 @@ const SortableTask = ({
     columnId,
     assignUserToTask,
   }) => {
-    console.log()
     const {columns,setEditingTask,setColumns}= useKanban();
-  //   const users = [
-  //     { id: 1, name: "Alice", avatar: "https://i.pravatar.cc/40?u=1" },
-  //     { id: 2, name: "Bob", avatar: "https://i.pravatar.cc/40?u=2" },
-  //     { id: 3, name: "Charlie", avatar: "https://i.pravatar.cc/40?u=3" },
-  // ];
+    
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
       id,
     });
