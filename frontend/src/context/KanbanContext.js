@@ -24,6 +24,11 @@ export const KanbanProvider = ({ children }) => {
   const [taskDescription, setTaskDescription] = useState('');
   const [taskDueDate, setTaskDueDate] = useState('');
   const [assignedUsersId, setAssignedUsersId] = useState('');
+  const [taskid, setTaskid] = useState('');
+  const [task,setTask] = useState(null);
+  const [assignUserToTask,setAssignUserToTask] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState(null);
 
   return (
     <KanbanContext.Provider value={{
@@ -40,6 +45,11 @@ export const KanbanProvider = ({ children }) => {
       taskDescription, setTaskDescription,
       taskDueDate, setTaskDueDate,
       assignedUsersId, setAssignedUsersId,
+      taskid, setTaskid,
+      task,setTask,
+      assignUserToTask,setAssignUserToTask,
+      searchTerm, setSearchTerm,
+      searchResults, setSearchResults
     }}>
       {children}
     </KanbanContext.Provider>

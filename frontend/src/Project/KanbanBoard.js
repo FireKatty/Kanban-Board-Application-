@@ -23,8 +23,6 @@ import {
 } from '../Style Component/KanbanBoard.js';
 
 
-
-
 const KanbanBoard = () => {
   const {
     columns, setColumns,
@@ -40,8 +38,10 @@ const KanbanBoard = () => {
     taskDescription, setTaskDescription,
     taskDueDate, setTaskDueDate,
     assignedUsersId, setAssignedUsersId,
+    searchTerm, setSearchTerm,
+    searchResults, setSearchResults
   } = useKanban(); // Get state from context
-  
+
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -205,51 +205,125 @@ const KanbanBoard = () => {
     setColumns(newColumns);
   };
 
+ 
+  const handleSearch = (event) => {
+    const term = event.target.value.toLowerCase();
+    setSearchTerm(term);
   
+    if (term === '') {
+      setSearchResults(null); // Clear search results when input is empty
+      return;
+    }
   
-
+    const filteredColumns = Object.keys(columns).reduce((acc, columnId) => {
+      const tasks = columns[columnId].tasks.filter(
+        (task) =>
+          task.title.toLowerCase().includes(term) ||
+          task.description.toLowerCase().includes(term)
+      );
+  
+      if (tasks.length > 0) {
+        acc[columnId] = { ...columns[columnId], tasks };
+      }
+  
+      return acc;
+    }, {});
+  
+    setSearchResults(Object.keys(filteredColumns).length > 0 ? filteredColumns : null);
+  };
+  
+  const renderColumns = () => {
+    const columnsToRender = searchResults || columns;
+  
+    if (searchResults === null && searchTerm.trim() !== '') {
+      console.log("no result found")
+      return (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            // height: '100vh',
+            padding: '10px',
+          }}
+        >
+          <p style={{ color: 'black', fontSize: '1.2rem', fontWeight: '500' }}>
+            No results found.
+          </p>
+        </div>
+      );
+    }
+  
+    return Object.keys(columnsToRender).map((columnId) => (
+      <ColumnWrapper key={columnId}>
+        <ColumnTitle>
+          {isRenaming === columnId ? (
+            <div>
+              <Input
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                placeholder="Rename column"
+              />
+              <button onClick={() => handleRename(columnId)}>Save</button>
+            </div>
+          ) : (
+            <>
+              {columnsToRender[columnId]?.title}
+              <ColumnActions>
+                <RenameButton
+                  onClick={() => {
+                    setIsRenaming(columnId);
+                    setRenameValue(columnsToRender[columnId]?.title);
+                  }}
+                >
+                  <FaEdit size={20} />
+                </RenameButton>
+                <button onClick={() => handleRemoveColumnClick(columnId)}>
+                  <FaTrash size={15} />
+                </button>
+              </ColumnActions>
+            </>
+          )}
+        </ColumnTitle>
+        <Column
+          key={columnId}
+          columnId={columnId}
+          tasks={columnsToRender[columnId].tasks}
+        />
+        <AddColumnButton onClick={() => setSelectedColumnId(columnId)}>
+          Add Task
+        </AddColumnButton>
+      </ColumnWrapper>
+    ));
+  };
+  
   return (
     <div>
-        {/* <AddColumnButton onClick={() => setIsModalOpen(true)}>Add Column</AddColumnButton> */}
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <ColumnsContainer>
-          {Object.keys(columns).map((columnId) => (
-            <ColumnWrapper key={columnId}>
-                <ColumnTitle>
-              {isRenaming === columnId ? (
-                <div>
-                  <Input
-                    value={renameValue}
-                    onChange={(e) => setRenameValue(e.target.value)}
-                    placeholder="Rename column"
-                  />
-                  <button onClick={() => handleRename(columnId)}>Save</button>
-                </div>
-              ) : (
-                  <>
-                    {columns[columnId]?.title}
-                    <ColumnActions>
-                        <RenameButton onClick={() => { setIsRenaming(columnId); setRenameValue(columns[columnId]?.title); }}>
-                        <FaEdit size={20} />
-                        </RenameButton>
-                        <button onClick={() => handleRemoveColumnClick(columnId)}>
-                          <FaTrash size={15} />
-                        </button>
-                    </ColumnActions>
-                  </>
-              )}
-              </ColumnTitle>
-              <Column
-                 key={columnId}
-                 columnId={columnId}
-              />
-              <AddColumnButton onClick={() => setSelectedColumnId(columnId)} >Add Task</AddColumnButton>
-            </ColumnWrapper>
-          ))}
-        </ColumnsContainer>
-      </DndContext>
+      <div style={{ marginBottom: "20px", display: 'flex', justifyContent: 'center' }}>
+      <Input
+        type="text"
+        placeholder="Search tasks or descriptions..."
+        value={searchTerm}
+        onChange={handleSearch}
+        style={{
+          width: '100%',
+          maxWidth: '500px',
+          padding: '10px',
+          fontSize: '1rem',
+          borderRadius: '5px',
+          border: '1px solid #ccc',
+          boxSizing: 'border-box',
+          marginRight: '10px',
+          outline: 'none',
+          transition: 'border-color 0.3s',
+        }}
+      />
+    </div>
 
-      
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <ColumnsContainer>{renderColumns()}</ColumnsContainer>
+      </DndContext>
 
       {isModalOpen && (
         <ConfirmDialog>
@@ -279,20 +353,16 @@ const KanbanBoard = () => {
         </ConfirmDialog>
       )}
 
-
-
-    {selectedColumnId && (
+      {selectedColumnId && (
         <ModalOverlay>
           <ModalContainer>
             <h3>Add New Task</h3>
-            {/* Task Title */}
             <Input
               type="text"
               value={taskToAdd}
               onChange={(e) => setTaskToAdd(e.target.value)}
               placeholder="Enter task title"
             />
-            {/* Task Description */}
             <textarea
               value={taskDescription}
               onChange={(e) => setTaskDescription(e.target.value)}
@@ -305,13 +375,11 @@ const KanbanBoard = () => {
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 resize: 'vertical',
-                color: 'white', // Text color
-                backgroundColor: 'rgba(0, 0, 0, 0.8)', // Background color
-                outline: 'none', // To remove any default focus outline
+                color: 'white',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                outline: 'none',
               }}
-              
             />
-            {/* Task Due Date */}
             <DateInputWithIcon>
               <input
                 type="date"
@@ -320,14 +388,12 @@ const KanbanBoard = () => {
               />
               <FaCalendarAlt className="icon" />
             </DateInputWithIcon>
-
-            <Input 
-                type='text'
-                value = {assignedUsersId}
-                placeholder="Enter Assign Users Ids"
-                onChange={(e) => setAssignedUsersId(e.target.value)}
+            <Input
+              type="text"
+              value={assignedUsersId}
+              placeholder="Enter Assign Users Ids"
+              onChange={(e) => setAssignedUsersId(e.target.value)}
             />
-            {/* Action Buttons */}
             <div>
               <ModalButton
                 onClick={() => {
@@ -337,10 +403,10 @@ const KanbanBoard = () => {
                     dueDate: taskDueDate,
                     id: assignedUsersId,
                   });
-                  setTaskToAdd(''); // Reset fields
+                  setTaskToAdd('');
                   setTaskDescription('');
                   setTaskDueDate('');
-                  setSelectedColumnId(null); // Close modal
+                  setSelectedColumnId(null);
                 }}
               >
                 Add Task
@@ -364,7 +430,6 @@ const KanbanBoard = () => {
         <ModalOverlay>
           <ModalContainer>
             <h3>Edit Task</h3>
-            {/* Task Title */}
             <Input
               type="text"
               value={editingTask.title}
@@ -373,7 +438,6 @@ const KanbanBoard = () => {
               }
               placeholder="Enter task title"
             />
-            {/* Task Description */}
             <textarea
               value={editingTask.description}
               onChange={(e) =>
@@ -388,12 +452,11 @@ const KanbanBoard = () => {
                 borderRadius: '5px',
                 border: '1px solid #ccc',
                 resize: 'vertical',
-                color: 'white', // Text color
-                backgroundColor: 'rgba(0, 0, 0, 0.8)', // Background color
-                outline: 'none', // To remove any default focus outline
+                color: 'white',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                outline: 'none',
               }}
             />
-            {/* Task Due Date */}
             <Input
               type="date"
               value={editingTask.dueDate}
@@ -401,14 +464,17 @@ const KanbanBoard = () => {
                 setEditingTask({ ...editingTask, dueDate: e.target.value })
               }
             />
-            <Input 
-                type='text'
-                value = {editingTask.assignedUsers}
-                placeholder="Enter Assign Users Ids"
-                onChange={(e) => setEditingTask({...editingTask,assignedUsers:e.target.value})}
+            <Input
+              type="text"
+              value={editingTask.assignedUsers}
+              placeholder="Enter Assign Users Ids"
+              onChange={(e) =>
+                setEditingTask({
+                  ...editingTask,
+                  assignedUsers: e.target.value,
+                })
+              }
             />
-             
-            {/* Action Buttons */}
             <div>
               <ModalButton onClick={saveEditedTask}>Save</ModalButton>
               <ModalButton onClick={() => setEditingTask(null)}>Cancel</ModalButton>
@@ -421,4 +487,3 @@ const KanbanBoard = () => {
 };
 
 export default KanbanBoard;
-
