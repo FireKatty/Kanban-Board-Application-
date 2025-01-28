@@ -41,10 +41,15 @@ Amaha Frontend Assignment
 
 # npm install
 
-3->Create a .env file (if required): If your project uses environment variables (like API keys, DB credentials,JWT_KEY,MONGO_URI), create a .env file at the root of the project and add any necessary
+3->Create a .env file : provide environment variables (like API keys, DB credentials,JWT_KEY,MONGO_URI), create a .env file at the root of the project or backend folder and add any necessary
 
-4-Change API URL in Login Page and CORS in server.js - 
-## http://localhost:9876/
+## PORT = 9876
+## JWT_SECRET = 
+# MONGO_URI= mongodb://localhost:27017/KanbanBoard
+
+4-Change API URL in frontend Page and CORS in server.js - 
+## http://localhost:3000/ change in server.js cors
+## http://localhost:9876/ change in frontend APIs
 
 
 4->Run the Application: To start the development server and view your app locally, use the following command:
